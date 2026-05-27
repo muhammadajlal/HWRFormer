@@ -7,7 +7,6 @@ Core modules:
 - hwrformer.dataset: Data loading and preprocessing
 - hwrformer.training: Training loops and utilities (CTC, AR, hybrid)
 - hwrformer.analysis: Quantitative analysis tools (metrics, encoder features)
-- hwrformer.tokenizer: Character-level text tokenization
 - hwrformer.evaluate: Evaluation metrics
 - hwrformer.visualize: Result visualization
 """

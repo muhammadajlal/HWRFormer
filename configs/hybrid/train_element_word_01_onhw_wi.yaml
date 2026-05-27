@@ -1,13 +1,29 @@
-# =========================
-# AR Baseline (TF, no corruption): ar_transformer + blconv_b + elementwise gating
-# Dataset: onhw_wd_word_rh (writer-DEPENDENT, word-level, OnHW500)
-# Reference baseline for the input-corruption ablation comparison on the WD split.
-# =========================
+# Hybrid CTC-AR, lambda_ctc sweep: lambda_ctc=0.1
+# Dataset: onhw_wi_word_rh
+# Auto-generated for the lambda-CTC sweep.
+
+dual_head:
+  enabled: true
+  arch_ctc: linear
+  lambda_ar: 1.0
+  lambda_ctc: 0.1
+  tie:
+    ctc_to_ar_outproj: false
+    ar_emb_outproj: false
+    ctc_input_space: "dec"
+  lambda_ctc_schedule:
+    enabled: false
+    type: linear
+    warmup_epochs: 0
+    max: 0.1
+    decay_start: 50
+    min: 0.1
+    decay_epochs: 100
+  loss_balance: sum
 
 arch_de: 'ar_transformer'
 freeze_decoder_epochs: 0
 pretrained_decoder_checkpoint: null
-
 arch_en: 'blconv_b'
 aug: true
 cache: true
@@ -15,8 +31,8 @@ checkpoint: null
 ctc_decoder: best_path
 device: cuda
 
-dir_dataset: ${REPO}/data/onhw_wd_word_rh
-dir_work: ${REPO}/results/hwr2/Baseline-AR-ElementwiseGating-WD/ar_transformer__onhw_wd_word_rh
+dir_dataset: ${REPO}/data/onhw_wi_word_rh
+dir_work: ${REPO}/results/hwr2/train_element_word_hybrid_01_onhw_wi/ar_transformer__onhw_wi_word_rh
 
 epoch: 300
 epoch_warmup: 30

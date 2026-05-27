@@ -1,7 +1,11 @@
 # =========================
-# AR Baseline (TF, no corruption): ar_transformer + blconv_b + elementwise gating
-# Dataset: onhw_wd_word_rh (writer-DEPENDENT, word-level, OnHW500)
-# Reference baseline for the input-corruption ablation comparison on the WD split.
+# AR Baseline (param-matched to REWI's CTC): ar_transformer + blconv_b + elementwise gating
+# Dataset: onhw_wi_word_rh (word-level, OnHW500 WI)
+#
+# `ar_transformer` halves the decoder depth (4 -> 2 layers) and narrows the
+# FFN (1024 -> 896) relative to `ar_transformer_s`, landing at ~4.64M total
+# params -- identical budget to REWI's CTC baseline (blconv_b + bilstm_wide).
+# Lets us claim "same param budget as REWI's published baseline".
 # =========================
 
 arch_de: 'ar_transformer'
@@ -15,8 +19,8 @@ checkpoint: null
 ctc_decoder: best_path
 device: cuda
 
-dir_dataset: ${REPO}/data/onhw_wd_word_rh
-dir_work: ${REPO}/results/hwr2/Baseline-AR-ElementwiseGating-WD/ar_transformer__onhw_wd_word_rh
+dir_dataset: ${REPO}/data/onhw_wi_word_rh
+dir_work: ${REPO}/results/hwr2/Baseline-AR-blconv_b/ar_transformer__onhw_wi_word_rh
 
 epoch: 300
 epoch_warmup: 30

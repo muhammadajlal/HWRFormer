@@ -54,7 +54,7 @@ def setup_tokenizer(cfgs: argparse.Namespace):
         PAD_ID, BOS_ID, EOS_ID: special token IDs.
     """
     AR_MODE = cfgs.arch_de in {
-        "ar_transformer_xs", "ar_transformer_s", "ar_transformer_m", "ar_transformer_l"
+        "ar_transformer"
     }
 
     base = len(cfgs.categories)
@@ -474,7 +474,7 @@ def _save_checkpoints(cfgs, model, optimizer, lr_scheduler, manager, e):
 def main(cfgs: argparse.Namespace) -> None:
     """Train or evaluate a CTC / AR / hybrid model from a YAML config."""
     AR_MODE = cfgs.arch_de in {
-        "ar_transformer_xs", "ar_transformer_s", "ar_transformer_m", "ar_transformer_l"
+        "ar_transformer"
     }
     cfgs.AR_MODE = bool(AR_MODE)
 

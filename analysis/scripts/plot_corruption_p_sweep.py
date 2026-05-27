@@ -8,7 +8,7 @@ left-most x=0.00 point.
 
 Three panels (left to right): OnHW-WI (closed-vocab short), OnHW-WD
 (closed-vocab short, writer-dependent), private sentences (open-vocab,
-long). XS data only.
+long).
 
 Run from anywhere:
     python plot_corruption_p_sweep.py
@@ -61,14 +61,14 @@ def read_5fold(model_dir: Path) -> tuple[float | None, float | None]:
 
 def cell_path(dataset_key: str, p: float) -> Path:
     if p == 0.00:
-        return RESULTS / "Baseline-AR-XS-blconv_b" / f"ar_transformer_xs__{dataset_key}"
+        return RESULTS / "Baseline-AR-blconv_b" / f"ar_transformer__{dataset_key}"
     if abs(p - 0.15) < 1e-9:
-        return RESULTS / "Baseline-AR-XS-InputCorruption-uniform" / f"ar_transformer_xs__{dataset_key}"
+        return RESULTS / "Baseline-AR-InputCorruption-uniform" / f"ar_transformer__{dataset_key}"
     pstr = f"p0p{int(round(p * 100)):02d}"
     return (
         RESULTS
-        / "Baseline-AR-XS-InputCorruption-Sweep-blconv_b"
-        / f"ar_transformer_xs__{dataset_key}__{pstr}"
+        / "Baseline-AR-InputCorruption-Sweep-blconv_b"
+        / f"ar_transformer__{dataset_key}__{pstr}"
     )
 
 

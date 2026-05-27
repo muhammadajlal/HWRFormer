@@ -26,11 +26,6 @@ seed: 42
 size_batch: 64
 test: false
 
-tokenizer:
-  type: sentencepiece
-  model: ${REPO}/work/REWI_work/tokenizer/bpe100.model
-  vocab_size: 100
-use_bpe: false
 
 # Gating (Only for transformer decoder)
 use_gated_attention: false

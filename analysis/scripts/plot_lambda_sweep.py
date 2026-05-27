@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
-"""Generate ctc_diagnostics_compact.pdf for paper 2 (XS data).
+"""Generate ctc_diagnostics_compact.pdf for paper 2.
 
 Two-panel figure: downstream AR CER (left) and WER (right) vs lambda_ctc,
 5-fold mean +/- across-fold standard deviation. Light traces are
 per-fold curves. Dashed vertical line marks the selected lambda_ctc=0.1.
 A horizontal AR-only reference is drawn as a dotted line.
 
-XS lambda sweep data lives under
-  results/hwr2/train_element_word_hybrid_{01..10}_xs_onhw_wi/
-  ar_transformer_xs__onhw_wi_word_rh/fold_{0..4}/{0..4}/train_*.json
+Lambda sweep data lives under
+  results/hwr2/train_element_word_hybrid_{01..10}_onhw_wi/
+  ar_transformer__onhw_wi_word_rh/fold_{0..4}/{0..4}/train_*.json
 AR-only baseline is under
-  results/hwr2/Baseline-AR-XS-blconv_b/ar_transformer_xs__onhw_wi_word_rh/
+  results/hwr2/Baseline-AR-blconv_b/ar_transformer__onhw_wi_word_rh/
 
 Run from anywhere:
     python plot_lambda_sweep.py
@@ -56,8 +56,8 @@ def read_per_fold(model_dir: Path) -> tuple[list[float], list[float]]:
 def lambda_dir(k: int) -> Path:
     return (
         RESULTS
-        / f"train_element_word_hybrid_{k:02d}_xs_onhw_wi"
-        / "ar_transformer_xs__onhw_wi_word_rh"
+        / f"train_element_word_hybrid_{k:02d}_onhw_wi"
+        / "ar_transformer__onhw_wi_word_rh"
     )
 
 
@@ -72,7 +72,7 @@ def main() -> None:
         wer_per_lambda.append(w)
 
     # AR-only baseline (lambda = 0 anchor).
-    ar_only_dir = RESULTS / "Baseline-AR-XS-blconv_b" / "ar_transformer_xs__onhw_wi_word_rh"
+    ar_only_dir = RESULTS / "Baseline-AR-blconv_b" / "ar_transformer__onhw_wi_word_rh"
     ar_cers, ar_wers = read_per_fold(ar_only_dir)
     ar_cer_mean = statistics.mean(ar_cers)
     ar_wer_mean = statistics.mean(ar_wers)

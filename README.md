@@ -22,19 +22,17 @@ bias in the AR decoder — **input corruption** and **hybrid CTC–AR training**
 ```
 main.py                 # Train / evaluate one fold
 evaluate.py             # 5-fold cross-validation aggregation + params/MACs
-pretrain_decoder.py     # Optional text-only decoder pretraining
-rewi/                   # Core library
+hwrformer/              # Core library
   model/                #   encoders (1D CNN), AR Transformer decoder,
                         #   CTC Transformer, hybrid dual-head, gating
   dataset/              #   IMU loaders, augmentations, collation
   training/             #   train/eval loops (CTC, AR, hybrid)
-  tokenizer/            #   char + BPE tokenizers
-  decoding/             #   CTC best-path decoder
+  analysis/             #   metrics + encoder-feature analysis
+  ctc_decoder.py        #   CTC best-path decoder
 configs/                # YAML experiment configs (see below)
 analysis/scripts/       # Table + figure regeneration scripts
 assets/dictionaries/    # READMEs documenting the public corpora used
-tokenizer/              # BPE training helper scripts
-xs_numbers.json         # Pre-aggregated 5-fold means for all paper tables/figures
+HWRFormer.json          # Pre-aggregated 5-fold means for all paper tables/figures
 LICENSE.txt             # MIT
 requirements.txt        # Python dependencies
 ```
@@ -50,10 +48,10 @@ because that data cannot be redistributed.
 | `configs/Baseline-REWI/` | CNN-BiLSTM-CTC baseline (REWI) |
 | `configs/AR-Baseline/` | HWRFormer: AR (no gating / elementwise / headwise) + parameter-matched Transformer-CTC |
 | `configs/AR-Baseline-WD/` | Writer-dependent OnHW variants |
-| `configs/AR-InputCorruption-XS/` | The five input-corruption modes (uniform, bigram-right, bigram-left, self-confusion, adjacent-swap) |
-| `configs/AR-InputCorruption-Sweep-XS/` | Corruption-rate (`p_ic`) sweep |
-| `configs/hybrid-xs/` | Hybrid CTC–AR `λ_ctc` sweep + weight-tying ablation |
-| `configs/HybridInputCorruption-XS-L01/` | Hybrid + corruption combination (λ_ctc = 0.1) |
+| `configs/AR-InputCorruption/` | The five input-corruption modes (uniform, bigram-right, bigram-left, self-confusion, adjacent-swap) |
+| `configs/AR-InputCorruption-Sweep/` | Corruption-rate (`p_ic`) sweep |
+| `configs/hybrid/` | Hybrid CTC–AR `λ_ctc` sweep + weight-tying ablation |
+| `configs/HybridInputCorruption/` | Hybrid + corruption combination (λ_ctc = 0.1) |
 
 ## Setup
 
@@ -88,7 +86,7 @@ for download instructions. (The corpus text files themselves are not shipped.)
 Train one fold:
 
 ```bash
-python main.py -c configs/AR-Baseline/train-ar-baseline-xs-onhw-word.yaml
+python main.py -c configs/AR-Baseline/train-ar-baseline-onhw-word.yaml
 ```
 
 (Set `idx_fold` 0–4 in the YAML, or override on the command line, to run the
@@ -99,7 +97,7 @@ Aggregate cross-validation results (computes 5-fold mean CER/WER, parameter
 counts, and MACs via `FlopCounterMode`):
 
 ```bash
-python evaluate.py -c configs/AR-Baseline/train-ar-baseline-xs-onhw-word.yaml
+python evaluate.py -c configs/AR-Baseline/train-ar-baseline-onhw-word.yaml
 ```
 
 Regenerate paper figures from the pre-aggregated numbers without re-running
@@ -113,7 +111,7 @@ python analysis/scripts/ctc_posterior_lambda_analysis.py # CTC posterior diagnos
 python analysis/scripts/compare_ar_hybrid.py            # PCA + cosine diagnostics
 ```
 
-`xs_numbers.json` contains the 5-fold means underlying every table and figure
+`HWRFormer.json` contains the 5-fold means underlying every table and figure
 in the paper, so the plots can be rebuilt without access to the training
 checkpoints.
 

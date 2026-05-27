@@ -218,7 +218,7 @@ def get_macs_params(cfgs: dict, results: dict = {}) -> dict:
         """
         base = int(len(cfgs['categories']))
         arch_de = str(cfgs.get('arch_de'))
-        ar_mode = arch_de in {"ar_transformer_xs", "ar_transformer_s", "ar_transformer_m", "ar_transformer_l"}
+        ar_mode = arch_de in {"ar_transformer"}
 
         # Character mode (the released configs are all character-level)
         pad_id, bos_id, eos_id = base, base + 1, base + 2

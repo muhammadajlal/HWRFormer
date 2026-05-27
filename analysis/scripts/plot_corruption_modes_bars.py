@@ -48,20 +48,20 @@ MODES: list[tuple[str, str, str]] = [
     ("adjacentswap", "adjacent-swap",  "#d62728"),
 ]
 
-# XS layout: one corruption-mode directory per mode, with per-dataset
-# subdirs inside. No -WD / -Equations variants needed (XS dirs cover
-# all 6 datasets uniformly). Baseline (no corruption) is the
-# elementwise-gating run under Baseline-AR-XS-blconv_b/.
+# Layout: one corruption-mode directory per mode, with per-dataset
+# subdirs inside (these dirs cover all 6 datasets uniformly). Baseline
+# (no corruption) is the
+# elementwise-gating run under Baseline-AR-blconv_b/.
 def mode_dir(mode_key: str, dataset_key: str) -> Path:
     return (
         RESULTS_ROOT
-        / f"Baseline-AR-XS-InputCorruption-{mode_key}"
-        / f"ar_transformer_xs__{dataset_key}"
+        / f"Baseline-AR-InputCorruption-{mode_key}"
+        / f"ar_transformer__{dataset_key}"
     )
 
 
 def baseline_dir(dataset_key: str) -> Path:
-    return RESULTS_ROOT / "Baseline-AR-XS-blconv_b" / f"ar_transformer_xs__{dataset_key}"
+    return RESULTS_ROOT / "Baseline-AR-blconv_b" / f"ar_transformer__{dataset_key}"
 
 
 def read_5fold_cer(model_dir: Path) -> float | None:

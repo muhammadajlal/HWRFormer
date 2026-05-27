@@ -18,13 +18,13 @@ sys.path.insert(0, str(PROJ))
 from evaluate import get_macs_params  # noqa: E402
 
 CONFIGS = [
-    ("REWI BiLSTM-CTC",         "configs/decode_study/base_rewi_ctc.yaml"),
-    ("HWRFormer CTC",           "configs/AR-Baseline/train-transformer-xs-ctc-onhw-word.yaml"),
-    ("HWRFormer AR no-gate",    "configs/AR-Baseline/train-ar-xs-ungated-onhw-word.yaml"),
-    ("HWRFormer AR elementwise","configs/AR-Baseline/train-ar-baseline-xs-onhw-word.yaml"),
-    ("HWRFormer AR headwise",   "configs/AR-Baseline/train-ar-xs-headwise-onhw-word.yaml"),
-    ("Hybrid indep lam=0.1",    "configs/hybrid-xs/train_element_word_01_xs_onhw_wi.yaml"),
-    ("Hybrid tied  lam=0.1",    "configs/hybrid-xs/train_element_word_01_xs_onhw_wi_ctc_to_ar_outproj.yaml"),
+    ("REWI BiLSTM-CTC",         "configs/Baseline-REWI/train-rewi-onhw-word.yaml"),
+    ("HWRFormer CTC",           "configs/AR-Baseline/train-transformer-ctc-onhw-word-matched.yaml"),
+    ("HWRFormer AR no-gate",    "configs/AR-Baseline/train-ar-ungated-onhw-word.yaml"),
+    ("HWRFormer AR elementwise","configs/AR-Baseline/train-ar-baseline-onhw-word.yaml"),
+    ("HWRFormer AR headwise",   "configs/AR-Baseline/train-ar-headwise-onhw-word.yaml"),
+    ("Hybrid indep lam=0.1",    "configs/hybrid/train_element_word_01_onhw_wi.yaml"),
+    ("Hybrid tied  lam=0.1",    "configs/hybrid/train_element_word_01_onhw_wi_ctc_to_ar_outproj.yaml"),
 ]
 
 
