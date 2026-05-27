@@ -1,0 +1,53 @@
+# ============================================================================
+# Hybrid CTC-AR HWRFormer. The AR baseline plus an auxiliary CTC head on the
+# shared encoder, adding a training-only CTC loss summed with the AR loss.
+#   python train_cv.py -c configs/others/train_hybrid.yaml
+#
+# Sweep lambda_ctc ∈ 0.1 .. 1.0 for the paper's lambda study. Set
+# tie.ctc_to_ar_outproj: true for the weight-tying ablation. (Set dir_work per
+# the README knob table.)
+# ============================================================================
+
+arch_en: blconv_b
+arch_de: ar_transformer
+use_gated_attention: true
+gating_type: elementwise
+
+dir_dataset: ${REPO}/data/onhw_wi_word_rh
+dir_work: ${REPO}/results/hwr2/train_element_word_hybrid_01_onhw_wi/ar_transformer__onhw_wi_word_rh
+num_channel: 13
+len_seq: 0
+aug: true
+cache: true
+
+idx_fold: -1
+
+epoch: 300
+epoch_warmup: 30
+lr: 0.001
+size_batch: 64
+seed: 42
+num_worker: 16
+device: cuda
+
+checkpoint: null
+freeze: false
+
+ctc_decoder: best_path
+freq_eval: 5
+freq_log: 50
+freq_save: 10
+save_best_only: true
+export_val_full: false
+test: false
+
+dual_head:
+  enabled: true
+  arch_ctc: linear
+  lambda_ar: 1.0
+  lambda_ctc: 0.1          # sweep: 0.1 .. 1.0
+  tie:
+    ctc_to_ar_outproj: false   # true = weight-tying ablation
+  loss_balance: sum
+
+categories: ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "Ä", "Ö", "Ü", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "ä", "ö", "ü", "ß"]

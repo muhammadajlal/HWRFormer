@@ -67,7 +67,7 @@ def baseline_dir(dataset_key: str) -> Path:
 def read_5fold_cer(model_dir: Path) -> float | None:
     cers: list[float] = []
     for k in range(5):
-        files = sorted(glob.glob(str(model_dir / f"fold_{k}/{k}/train_*.json")))
+        files = sorted(glob.glob(str(model_dir / f"{k}/train_*.json")))
         if not files:
             return None
         try:

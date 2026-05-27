@@ -19,9 +19,9 @@ Example (run from work/REWI_work):
 
 python3 analysis/scripts/export_error_tables.py \
   --folds 0,1,2,3,4 \
-  --row "AR-only=../../results/hwr2/element_word_onhw500_new/ar_transformer_s__onhw_wi_word_rh/fold_{fold}/exports/val_full_fold{fold}_epoch0.json" \
-  --row "Hybrid (AR)=../../results/hwr2/train_element_word_hybrid_06/ar_transformer_s__onhw_wi_word_rh/fold_{fold}/exports/val_full_fold{fold}_epoch0_ar.json" \
-  --row "Hybrid (CTC)=../../results/hwr2/train_element_word_hybrid_06/ar_transformer_s__onhw_wi_word_rh/fold_{fold}/exports/val_full_fold{fold}_epoch0_ctc.json" \
+  --row "AR-only=../../results/hwr2/element_word_onhw500_new/ar_transformer__onhw_wi_word_rh/{fold}/exports/val_full_fold{fold}_epoch0.json" \
+  --row "Hybrid (AR)=../../results/hwr2/train_element_word_hybrid_06/ar_transformer__onhw_wi_word_rh/{fold}/exports/val_full_fold{fold}_epoch0_ar.json" \
+  --row "Hybrid (CTC)=../../results/hwr2/train_element_word_hybrid_06/ar_transformer__onhw_wi_word_rh/{fold}/exports/val_full_fold{fold}_epoch0_ctc.json" \
   --outdir analysis/tables/ar_vs_hybrid
 """
 

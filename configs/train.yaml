@@ -1,0 +1,76 @@
+# ============================================================================
+# HWRFormer — canonical training config (writer-independent OnHW-words500).
+#
+# This is the single config you edit per run. The defaults reproduce the
+# headline model: an autoregressive Transformer decoder on a 1D CNN encoder
+# with elementwise SDPA output gating. See the "Reproducing paper experiments"
+# table in the README for the knob overrides that produce every other result
+# (gating ablation, input corruption, hybrid CTC-AR, lambda / p_ic sweeps,
+# writer-dependent split).
+#
+#   5-fold cross validation:  python train_cv.py -c configs/train.yaml
+#   single fold:              set idx_fold to 0..4, then python main.py -c ...
+#   aggregate folds:          python evaluate.py -c configs/train.yaml
+# ============================================================================
+
+# --- architecture ---
+arch_en: blconv_b          # 1D CNN encoder
+arch_de: ar_transformer    # decoder: ar_transformer | transformer_ctc | bilstm_wide
+use_gated_attention: true  # SDPA output gating on the AR decoder
+gating_type: elementwise   # elementwise | headwise
+
+# --- data ---
+dir_dataset: ${REPO}/data/onhw_wi_word_rh
+dir_work: ${REPO}/results/hwr2/Baseline-AR-blconv_b/ar_transformer__onhw_wi_word_rh
+num_channel: 13
+len_seq: 0
+aug: true                  # train-set augmentation
+cache: true                # cache the dataset in RAM
+
+# --- cross validation ---
+idx_fold: -1               # -1 = all folds via train_cv.py; 0..4 = a single fold
+
+# --- optimisation ---
+epoch: 300
+epoch_warmup: 30
+lr: 0.001
+size_batch: 64
+seed: 42
+num_worker: 16
+device: cuda
+
+# --- checkpoint / resume ---
+checkpoint: null           # path to a checkpoint to resume / finetune from
+freeze: false              # freeze the encoder when loading a checkpoint
+
+# --- logging / evaluation / saving ---
+ctc_decoder: best_path
+freq_eval: 5               # epochs between validation evaluations
+freq_log: 50               # iterations between log lines
+freq_save: 10              # epochs between checkpoint saves
+save_best_only: true
+export_val_full: false
+test: false
+
+# --- optional: input corruption (AR exposure-bias remedy) --------------------
+# Uncomment to train with input corruption. See the README knob table.
+# input_corruption:
+#   enabled: true
+#   mode: uniform          # uniform | bigram_left | bigram_right | self_confusion | adjacent_swap
+#   p_replace: 0.15        # sweep: 0.05 0.10 0.15 0.20 0.30
+#   smoothing: 1.0
+#   # self_confusion only — per-fold confusion matrices:
+#   # confusion_path: ${REPO}/results/hwr2/confusion_matrices/onhw_wi_word_rh/fold_{fold}.npy
+
+# --- optional: hybrid CTC-AR training ----------------------------------------
+# Uncomment to add an auxiliary CTC head on the shared encoder. See the README.
+# dual_head:
+#   enabled: true
+#   arch_ctc: linear
+#   lambda_ar: 1.0
+#   lambda_ctc: 0.1        # sweep: 0.1 .. 1.0
+#   tie:
+#     ctc_to_ar_outproj: false   # true = weight-tying ablation
+#   loss_balance: sum
+
+categories: ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "Ä", "Ö", "Ü", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "ä", "ö", "ü", "ß"]

@@ -142,7 +142,7 @@ def parse_args():
     )
     # Model config (must match training)
     p.add_argument("--arch_en", type=str, default="blconv_b")
-    p.add_argument("--arch_de", type=str, default="ar_transformer_s")
+    p.add_argument("--arch_de", type=str, default="ar_transformer")
     p.add_argument("--num_channel", type=int, default=13)
     p.add_argument("--use_gated_attention", action="store_true", default=True)
     p.add_argument("--gating_type", type=str, default="elementwise")

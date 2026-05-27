@@ -25,9 +25,9 @@ Example (fold 0, 3 lambdas):
   python analysis/scripts/ctc_posterior_lambda_analysis.py \
     --lambdas 0.1 0.6 1.0 \
     --ckpts \
-      results/hwr2/train_element_word_hybrid_01/ar_transformer_s__onhw_wi_word_rh/fold_0/0/checkpoints/best_cer.pth \
-      results/hwr2/train_element_word_hybrid_06/ar_transformer_s__onhw_wi_word_rh/fold_0/0/checkpoints/best_cer.pth \
-      results/hwr2/train_element_word_hybrid_10/ar_transformer_s__onhw_wi_word_rh/fold_0/0/checkpoints/best_cer.pth \
+      results/hwr2/train_element_word_hybrid_01/ar_transformer__onhw_wi_word_rh/0/checkpoints/best_cer.pth \
+      results/hwr2/train_element_word_hybrid_06/ar_transformer__onhw_wi_word_rh/0/checkpoints/best_cer.pth \
+      results/hwr2/train_element_word_hybrid_10/ar_transformer__onhw_wi_word_rh/0/checkpoints/best_cer.pth \
     --dataset data/onhw_wi_word_rh --fold 0 \
     --outdir figures/ctc_posterior_lambda
 """
@@ -84,7 +84,7 @@ def _require_exists(p: str, *, name: str) -> None:
         if p.startswith("/") and "train_element_word_hybrid_" in p and "/results/" not in p:
             hint = (
                 "\nHint: this path looks like ${BASE}/${AR} expanded to empty. "
-                "Either define them (e.g. BASE=results/hwr2 and AR=ar_transformer_s__onhw_wi_word_rh) "
+                "Either define them (e.g. BASE=results/hwr2 and AR=ar_transformer__onhw_wi_word_rh) "
                 "or pass explicit paths starting with 'results/hwr2/...'."
             )
         raise FileNotFoundError(
@@ -981,7 +981,7 @@ def parse_args() -> argparse.Namespace:
 
     # Model config (must match training)
     p.add_argument("--arch_en", type=str, default="blconv_b")
-    p.add_argument("--arch_de", type=str, default="ar_transformer_s")
+    p.add_argument("--arch_de", type=str, default="ar_transformer")
     p.add_argument("--num_channel", type=int, default=13)
     p.add_argument("--use_gated_attention", action="store_true", default=True)
     p.add_argument("--gating_type", type=str, default="elementwise")
@@ -1009,7 +1009,7 @@ def main() -> None:
     _require_exists(args.dataset, name="--dataset")
 
     # NOTE: checkpoint existence validation happens later.
-    # In fold-averaging mode we expand templates like .../fold_{fold}/{fold}/... per fold.
+    # In fold-averaging mode we expand templates like .../{fold}/... per fold.
     args.ckpts = [_resolve_path(c) for c in args.ckpts]
     for c in args.ckpts:
         if c is None:
@@ -1050,7 +1050,7 @@ def main() -> None:
         )
 
     def _expand_ckpt(ckpt: str, fold: int) -> str:
-        # Allow templates like .../fold_{fold}/{fold}/...
+        # Allow templates like .../{fold}/...
         if "{fold}" in ckpt:
             return ckpt.format(fold=fold)
         return ckpt

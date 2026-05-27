@@ -1,0 +1,41 @@
+# ============================================================================
+# Parameter-matched Transformer-CTC baseline: a self-attention Transformer
+# encoder + CTC head (no AR decoder, no cross-attention), sized to REWI's
+# parameter budget. Isolates "Transformer vs BiLSTM" under CTC.
+#   python train_cv.py -c configs/others/train_transformer_ctc.yaml
+# ============================================================================
+
+arch_en: blconv_b
+arch_de: transformer_ctc
+use_gated_attention: false
+gating_type: elementwise
+
+dir_dataset: ${REPO}/data/onhw_wi_word_rh
+dir_work: ${REPO}/results/hwr2/Baseline-Transformer-CTC-Matched/transformer__onhw_wi_word_rh
+num_channel: 13
+len_seq: 0
+aug: true
+cache: true
+
+idx_fold: -1
+
+epoch: 300
+epoch_warmup: 30
+lr: 0.001
+size_batch: 64
+seed: 42
+num_worker: 16
+device: cuda
+
+checkpoint: null
+freeze: false
+
+ctc_decoder: best_path
+freq_eval: 5
+freq_log: 50
+freq_save: 10
+save_best_only: true
+export_val_full: false
+test: false
+
+categories: ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "Ä", "Ö", "Ü", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "ä", "ö", "ü", "ß"]

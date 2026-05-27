@@ -8,7 +8,7 @@ A horizontal AR-only reference is drawn as a dotted line.
 
 Lambda sweep data lives under
   results/hwr2/train_element_word_hybrid_{01..10}_onhw_wi/
-  ar_transformer__onhw_wi_word_rh/fold_{0..4}/{0..4}/train_*.json
+  ar_transformer__onhw_wi_word_rh/{0..4}/train_*.json
 AR-only baseline is under
   results/hwr2/Baseline-AR-blconv_b/ar_transformer__onhw_wi_word_rh/
 
@@ -40,7 +40,7 @@ SELECTED = 0.1
 def read_per_fold(model_dir: Path) -> tuple[list[float], list[float]]:
     cers, wers = [], []
     for k in range(5):
-        files = sorted(glob.glob(str(model_dir / f"fold_{k}/{k}/train_*.json")))
+        files = sorted(glob.glob(str(model_dir / f"{k}/train_*.json")))
         if not files:
             continue
         try:

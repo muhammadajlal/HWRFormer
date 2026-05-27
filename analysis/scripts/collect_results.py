@@ -46,7 +46,7 @@ def read_fold(model_dir: Path) -> tuple[Optional[float], Optional[float], int]:
     cers, wers = [], []
     n = 0
     for k in range(5):
-        files = sorted(glob.glob(str(model_dir / f"fold_{k}/{k}/train_*.json")))
+        files = sorted(glob.glob(str(model_dir / f"{k}/train_*.json")))
         if not files:
             continue
         try:

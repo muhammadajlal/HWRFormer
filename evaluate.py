@@ -8,6 +8,8 @@ import torch
 import torch.nn as nn
 import yaml
 from torch.utils.flop_counter import FlopCounterMode
+
+from hwrformer.utils import expand_cfg_paths
 # Legacy counter retained for fallback; see _LEGACY_get_macs_params() at the
 # bottom of this file. To switch back, replace the call in main() and uncomment
 # the line below.
@@ -317,7 +319,7 @@ def main(path_cfg: str) -> None:
         path_cfg (str): Path to the configuration YAML file.
     '''
     with open(path_cfg, 'r') as f:
-        cfgs = yaml.safe_load(f)
+        cfgs = expand_cfg_paths(yaml.safe_load(f))
 
     os.makedirs(cfgs['dir_work'], exist_ok=True)
 

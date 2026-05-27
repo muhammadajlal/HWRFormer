@@ -29,7 +29,7 @@ from hwrformer.dataset.utils import fn_collate
 from hwrformer.loss import CTCLoss
 from hwrformer.manager import RunManager
 from hwrformer.model import BaseModel, DualHeadModel
-from hwrformer.utils import seed_everything, seed_worker
+from hwrformer.utils import expand_cfg_paths, seed_everything, seed_worker
 
 from hwrformer.training import (
     train_one_epoch,
@@ -521,6 +521,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     with open(args.config, 'r') as f:
-        cfgs = argparse.Namespace(**yaml.safe_load(f))
+        cfgs = argparse.Namespace(**expand_cfg_paths(yaml.safe_load(f)))
 
     main(cfgs)

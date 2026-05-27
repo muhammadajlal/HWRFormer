@@ -5,6 +5,26 @@ import numpy as np
 import torch
 
 
+def expand_cfg_paths(obj):
+    '''Recursively expand environment variables (e.g. ``${REPO}``) and ``~`` in
+    every string value of a loaded config. Lets configs reference
+    ``${REPO}/...`` paths after ``export REPO=$(pwd)``.
+
+    Args:
+        obj: A value loaded from YAML (dict, list, or scalar).
+
+    Returns:
+        The value with env vars / ``~`` expanded in all contained strings.
+    '''
+    if isinstance(obj, dict):
+        return {k: expand_cfg_paths(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [expand_cfg_paths(v) for v in obj]
+    if isinstance(obj, str):
+        return os.path.expanduser(os.path.expandvars(obj))
+    return obj
+
+
 def seed_everything(seed: int = 42) -> None:
     '''Seed everything in the environment.
 

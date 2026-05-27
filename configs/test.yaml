@@ -1,0 +1,45 @@
+# ============================================================================
+# HWRFormer — evaluation config. Re-evaluate a trained checkpoint on the
+# validation split of one fold:
+#
+#   python main.py -c configs/test.yaml
+#
+# Set `checkpoint` to the .pth you want to score and `idx_fold` to the fold it
+# was trained on. (5-fold means are produced directly by training; use
+# evaluate.py to aggregate them — this config is only for ad-hoc re-scoring.)
+# ============================================================================
+
+arch_en: blconv_b
+arch_de: ar_transformer
+use_gated_attention: true
+gating_type: elementwise
+
+dir_dataset: ${REPO}/data/onhw_wi_word_rh
+dir_work: ${REPO}/results/hwr2/eval/ar_transformer__onhw_wi_word_rh
+num_channel: 13
+len_seq: 0
+aug: false
+cache: false
+
+idx_fold: 0                # fold the checkpoint was trained on
+
+epoch: 1
+epoch_warmup: 0
+lr: 0.001
+size_batch: 64
+seed: 42
+num_worker: 16
+device: cuda
+
+checkpoint: ${REPO}/results/hwr2/Baseline-AR-blconv_b/ar_transformer__onhw_wi_word_rh/0/checkpoints/best_cer.pth
+freeze: false
+
+ctc_decoder: best_path
+freq_eval: 1
+freq_log: 50
+freq_save: 1
+save_best_only: true
+export_val_full: false
+test: true
+
+categories: ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "Ä", "Ö", "Ü", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "ä", "ö", "ü", "ß"]

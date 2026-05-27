@@ -43,8 +43,8 @@ ONHW_CSV = WORK_DIR / "analysis" / "quant_all_val_predictions_ar_vs_hybrid.csv"
 STABILO_CSV = WORK_DIR / "analysis" / "quant_all_val_predictions_new.csv"
 
 # OnHW validation exports for collision analysis
-ONHW_AR_EXPORT_PAT = str(WORK_DIR.parent.parent / "results/hwr2/Baseline-AR/ar_transformer_s__onhw_wi_word_rh/fold_{fold}/exports/val_full_fold{fold}_epoch0.json")
-ONHW_HYB_EXPORT_PAT = str(WORK_DIR.parent.parent / "results/hwr2/Baseline-Hybrid/train_element_word_hybrid_06/ar_transformer_s__onhw_wi_word_rh/fold_{fold}/exports/val_full_fold{fold}_epoch0_ar.json")
+ONHW_AR_EXPORT_PAT = str(WORK_DIR.parent.parent / "results/hwr2/Baseline-AR/ar_transformer__onhw_wi_word_rh/{fold}/exports/val_full_fold{fold}_epoch0.json")
+ONHW_HYB_EXPORT_PAT = str(WORK_DIR.parent.parent / "results/hwr2/Baseline-Hybrid/train_element_word_hybrid_06/ar_transformer__onhw_wi_word_rh/{fold}/exports/val_full_fold{fold}_epoch0_ar.json")
 
 
 # ============================================================
