@@ -31,7 +31,6 @@ hwrformer/              # Core library
   ctc_decoder.py        #   CTC best-path decoder
 configs/                # YAML experiment configs (see below)
 analysis/scripts/       # Table + figure regeneration scripts
-assets/dictionaries/    # READMEs documenting the public corpora used
 HWRFormer.json          # Pre-aggregated 5-fold means for all paper tables/figures
 LICENSE.txt             # MIT
 requirements.txt        # Python dependencies
@@ -75,11 +74,6 @@ ${REPO}/data/onhw_wd_word_rh/   # writer-dependent words
 The private IMU pen dataset used for cross-dataset confirmation in the paper
 **cannot be redistributed** and is therefore not included; the corresponding
 configs are omitted.
-
-The bigram / self-confusion corruption modes use public German/English news
-corpora from the Leipzig Corpora Collection — see
-`assets/dictionaries/word/README.md` and `assets/dictionaries/sent/README.md`
-for download instructions. (The corpus text files themselves are not shipped.)
 
 ## Reproducing the paper
 

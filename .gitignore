@@ -13,8 +13,6 @@ results/
 
 # Large model assets (download separately)
 assets/hf_models/
-assets/dictionaries/**/*.txt
-!assets/dictionaries/**/removed_due_to_leakage.txt
 
 # Logs / caches
 logs/
