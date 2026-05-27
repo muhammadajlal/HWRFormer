@@ -13,7 +13,7 @@ blocks where AR-only has spurious frame coupling).
 
 Usage (from within the analysis pipeline, after extract_encoder_features):
 
-    from rewi.analysis.encoder_features import extract_encoder_features
+    from hwrformer.analysis.encoder_features import extract_encoder_features
     from analysis.scripts.plot_cosine_difference import plot_cosine_difference
 
     feats_ar  = extract_encoder_features(model_ar,  loader, device, categories, max_samples=10**9)

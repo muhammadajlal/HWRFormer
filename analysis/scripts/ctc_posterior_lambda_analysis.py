@@ -1037,7 +1037,7 @@ def main() -> None:
 
     qual_fold = int(args.qual_fold) if args.qual_fold is not None else folds[0]
 
-    from rewi.dataset import HRDataset
+    from hwrformer.dataset import HRDataset
 
     def _build_dataset(fold: int):
         return HRDataset(
@@ -1113,9 +1113,9 @@ def main() -> None:
 
     import torch.nn as nn
     from torch.utils.data import DataLoader, Subset
-    from rewi.dataset.utils import fn_collate
-    from rewi.model import DualHeadModel
-    from rewi.analysis.encoder_features import load_model_from_checkpoint
+    from hwrformer.dataset.utils import fn_collate
+    from hwrformer.model import DualHeadModel
+    from hwrformer.analysis.encoder_features import load_model_from_checkpoint
 
     @torch.no_grad()
     def extract_ctc_posteriors_for_ids(

@@ -912,7 +912,7 @@ class UniversalCrossAttnCatcher:
 
     def patch_decoder(self, decoder: "nn.Module"):
         import torch.nn as nn
-        from rewi.model.ARDecoder import GatedMultiheadAttention
+        from hwrformer.model.ARDecoder import GatedMultiheadAttention
 
         for name, m in decoder.named_modules():
             if "self_attn" in name:
@@ -1014,7 +1014,7 @@ def extract_cross_attention_teacher_forced(
             catcher.clear()
 
             # Forward (works for both BaseModel and DualHeadModel)
-            from rewi.model import DualHeadModel
+            from hwrformer.model import DualHeadModel
             if isinstance(model, DualHeadModel):
                 model(x, in_lengths=len_x.to(device), y_inp=y_inp)
             else:
@@ -1202,10 +1202,10 @@ def main():
     if not getattr(args, "skip_checkpoints", False) and (args.ar_ckpt or args.hyb_ckpt) and args.dataset:
         import torch
         from torch.utils.data import DataLoader, Subset
-        from rewi.dataset import HRDataset
-        from rewi.dataset.utils import fn_collate
-        from rewi.model import BaseModel, DualHeadModel
-        from rewi.analysis.encoder_features import (
+        from hwrformer.dataset import HRDataset
+        from hwrformer.dataset.utils import fn_collate
+        from hwrformer.model import BaseModel, DualHeadModel
+        from hwrformer.analysis.encoder_features import (
             extract_encoder_features,
             load_model_from_checkpoint,
         )
