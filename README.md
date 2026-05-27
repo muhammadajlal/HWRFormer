@@ -21,6 +21,33 @@ output gating. During hybrid training, an auxiliary CTC head on the same encoder
 adds a training-only loss summed with the AR loss; the dashed connector denotes
 the optional weight-tying ablation.*
 
+## Results
+
+5-fold cross-validation on the **public** OnHW-words500 splits (writer-independent
+and writer-dependent). CER/WER in %, lower is better; **bold** = best per column.
+MACs are reported at greedy AR decoding `len_max = 6`.
+
+**Architecture migration — CTC baseline → HWRFormer.**
+
+| Model | Obj. | Gating | WI CER | WI WER | WD CER | WD WER | #Params | MACs |
+|---|---|---|---|---|---|---|---|---|
+| REWI (CNN-BiLSTM) | CTC | — | 7.30 | 15.16 | 14.81 | 44.77 | 4.64M | **413M** |
+| HWRFormer | CTC | — | 7.11 | 14.77 | **13.26** | 42.88 | 4.62M | 429M |
+| HWRFormer | AR | — | 7.10 | **10.39** | 16.47 | 32.07 | 4.57M | 653M |
+| HWRFormer | AR | elementwise | **6.94** | 10.50 | 16.31 | 31.87 | 4.64M | 669M |
+| HWRFormer | AR | headwise | 6.99 | 10.47 | 15.70 | **31.08** | 4.57M | 667M |
+
+**Exposure-bias interventions** (CER / WER), HWRFormer = elementwise-gated AR.
+
+| Dataset | REWI | HWRFormer | + Corruption | + Hybrid | + Hybrid + Corruption |
+|---|---|---|---|---|---|
+| OnHW-words500 (WI) | 7.30 / 15.16 | 6.94 / 10.50 | 6.86 / 13.04 | 6.83 / **10.17** | **6.70** / 12.93 |
+| OnHW-words500 (WD) | 14.81 / 44.77 | 16.31 / 31.87 | 13.52 / 35.98 | 13.39 / **27.42** | **11.49** / 31.72 |
+
+OnHW fold difficulty varies strongly (across-fold std ≈ 7 pp on WI, 4–6 pp on
+WD), so sub-percentage-point differences are within fold noise. See the
+"Reproducing paper experiments" table below to regenerate any cell.
+
 ## Installation
 
 ```bash
@@ -32,17 +59,22 @@ export REPO=$(pwd)        # configs reference ${REPO} for dataset / output paths
 
 ## Dataset
 
-The paper's primary benchmark is the **public** OnHW-words500 dataset. Download
-it from the Fraunhofer IIS OnHW release and convert it to the MSCOCO-like layout
-(`train.json` / `val.json` + per-sample CSVs) used here, then place it under:
+For commercial reasons, the private IMU-pen datasets used for cross-dataset
+confirmation in the paper are not published. Alternatively, the **public**
+OnHW-words500 dataset can be used for training and evaluation; the paper's
+primary benchmark is its right-handed writer-independent subset. Download it
+from the Fraunhofer IIS OnHW release:
+<https://www.iis.fraunhofer.de/de/ff/lv/dataanalytics/anwproj/schreibtrainer/onhw-dataset.html>
+
+We use a MSCOCO-like structure (`train.json` / `val.json` + per-sample CSVs).
+After downloading, convert the original dataset to this structure with the
+`onhw.ipynb` notebook, adjusting the `dir_raw`, `dir_out`, and `writer_indep`
+variables accordingly. Then place the converted dataset under:
 
 ```
 ${REPO}/data/onhw_wi_word_rh/   # writer-independent words
 ${REPO}/data/onhw_wd_word_rh/   # writer-dependent words
 ```
-
-The private IMU pen dataset used for cross-dataset confirmation in the paper
-**cannot be redistributed** and is therefore not included.
 
 ## Training
 
@@ -126,6 +158,7 @@ python analysis/scripts/plot_lambda_sweep.py             # lambda_ctc sweep
 main.py                 # train / evaluate one fold
 train_cv.py             # run all cross-validation folds sequentially
 evaluate.py             # 5-fold aggregation + params/MACs
+onhw.ipynb              # OnHW -> MSCOCO-like dataset conversion
 hwrformer/              # core library
   model/                #   1D CNN encoder, AR Transformer decoder, Transformer-CTC,
                         #   hybrid dual-head, SDPA gating
