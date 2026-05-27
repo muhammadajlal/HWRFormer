@@ -17,6 +17,14 @@ The paper studies two training-time interventions that mitigate exposure
 bias in the AR decoder — **input corruption** and **hybrid CTC–AR training**
 — and contrasts them against the recurrent CNN-BiLSTM-CTC baseline.
 
+![HWRFormer architecture](docs/architecture.png)
+
+*HWRFormer architecture and hybrid training. The solid horizontal path is used
+at inference: a shared 1D CNN encoder feeds an AR Transformer decoder with SDPA
+output gating. During hybrid training, an auxiliary CTC head on the same encoder
+adds a training-only loss summed with the AR loss; the dashed connector denotes
+the optional weight-tying ablation.*
+
 ## Repository layout
 
 ```
@@ -31,6 +39,7 @@ hwrformer/              # Core library
   ctc_decoder.py        #   CTC best-path decoder
 configs/                # YAML experiment configs (see below)
 analysis/scripts/       # Table + figure regeneration scripts
+docs/                   # Architecture figure used in this README
 HWRFormer.json          # Pre-aggregated 5-fold means for all paper tables/figures
 LICENSE.txt             # MIT
 requirements.txt        # Python dependencies
