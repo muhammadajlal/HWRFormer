@@ -5,7 +5,7 @@
 # headline model: an autoregressive Transformer decoder on a 1D CNN encoder
 # with elementwise SDPA output gating. See the "Reproducing paper experiments"
 # table in the README for the knob overrides that produce every other result
-# (gating ablation, input corruption, hybrid CTC-AR, lambda / p_ic sweeps,
+# (gating ablation, noise injection, hybrid CTC-AR, lambda / p_ic sweeps,
 # writer-dependent split).
 #
 #   5-fold cross validation:  python train_cv.py -c configs/train.yaml
@@ -52,8 +52,10 @@ save_best_only: true
 export_val_full: false
 test: false
 
-# --- optional: input corruption (AR exposure-bias remedy) --------------------
-# Uncomment to train with input corruption. See the README knob table.
+# --- optional: noise injection (AR exposure-bias remedy) --------------------
+# Uncomment to train with noise injection. See the README knob table.
+# (The YAML key stays `input_corruption:` — that's the internal config name
+# the code reads.)
 # input_corruption:
 #   enabled: true
 #   mode: uniform          # uniform | bigram_left | bigram_right | self_confusion | adjacent_swap

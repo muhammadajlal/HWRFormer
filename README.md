@@ -10,7 +10,7 @@ HWRFormer is an encoder–decoder recognizer for inertial-measurement-unit (IMU)
 handwriting recognition: a 1D CNN encoder feeds an autoregressive (AR)
 Transformer decoder with scaled-dot-product-attention (SDPA) output gating. The
 paper studies two training-time interventions that mitigate exposure bias in the
-AR decoder — **input corruption** and **hybrid CTC–AR training** — and contrasts
+AR decoder — **noise injection** and **hybrid CTC–AR training** — and contrasts
 them against the recurrent CNN-BiLSTM-CTC baseline.
 
 ![HWRFormer architecture](figures/architecture.png)
@@ -39,7 +39,7 @@ MACs are reported at greedy AR decoding `len_max = 6`.
 
 **Exposure-bias interventions** (CER / WER), HWRFormer = elementwise-gated AR.
 
-| Dataset | REWI | HWRFormer | + Corruption | + Hybrid | + Hybrid + Corruption |
+| Dataset | REWI | HWRFormer | + Noise inj. | + Hybrid | + Hybrid + Noise inj. |
 |---|---|---|---|---|---|
 | OnHW-words500 (WI) | 7.30 / 15.16 | 6.94 / 10.50 | 6.86 / 13.04 | 6.83 / **10.17** | **6.70** / 12.93 |
 | OnHW-words500 (WD) | 14.81 / 44.77 | 16.31 / 31.87 | 13.52 / 35.98 | 13.39 / **27.42** | **11.49** / 31.72 |
@@ -103,7 +103,7 @@ epochs), and batch size 64. Each fold writes to `<dir_work>/<fold>/`.
 | `configs/train.yaml` | HWRFormer (AR + elementwise SDPA gating) — the headline model |
 | `configs/others/train_rewi_ctc.yaml` | CNN-BiLSTM-CTC baseline (REWI) |
 | `configs/others/train_transformer_ctc.yaml` | Parameter-matched Transformer-CTC |
-| `configs/others/train_corruption.yaml` | AR + input corruption |
+| `configs/others/train_corruption.yaml` | AR + noise injection |
 | `configs/others/train_hybrid.yaml` | Hybrid CTC–AR |
 
 ### Reproducing paper experiments
@@ -121,15 +121,15 @@ writer-dependent split.
 | AR, headwise gating | `train.yaml` | `gating_type: headwise` | `Baseline-AR-HeadwiseGating/ar_transformer__onhw_wi_word_rh` |
 | Transformer-CTC | `others/train_transformer_ctc.yaml` | *(as given)* | `Baseline-Transformer-CTC-Matched/transformer__onhw_wi_word_rh` |
 | CNN-BiLSTM-CTC (REWI) | `others/train_rewi_ctc.yaml` | *(as given)* | `blconv_bilstm_wide_no_tokenizer/bilstm_wide__onhw_wi_word_rh` |
-| Corruption mode | `others/train_corruption.yaml` | `input_corruption.mode:` `uniform` \| `bigram_left` \| `bigram_right` \| `self_confusion` \| `adjacent_swap` | `Baseline-AR-InputCorruption-<mode>/ar_transformer__onhw_wi_word_rh` |
-| Corruption-rate sweep | `others/train_corruption.yaml` | `input_corruption.p_replace:` `0.05` \| `0.10` \| `0.15` \| `0.20` \| `0.30` | `Baseline-AR-InputCorruption-Sweep-blconv_b/ar_transformer__onhw_wi_word_rh__p0p<NN>` |
+| Noise-injection mode | `others/train_corruption.yaml` | `input_corruption.mode:` `uniform` \| `bigram_left` \| `bigram_right` \| `self_confusion` \| `adjacent_swap` | `Baseline-AR-InputCorruption-<mode>/ar_transformer__onhw_wi_word_rh` |
+| Noise-injection rate sweep | `others/train_corruption.yaml` | `input_corruption.p_replace:` `0.05` \| `0.10` \| `0.15` \| `0.20` \| `0.30` | `Baseline-AR-InputCorruption-Sweep-blconv_b/ar_transformer__onhw_wi_word_rh__p0p<NN>` |
 | Hybrid λ sweep | `others/train_hybrid.yaml` | `dual_head.lambda_ctc:` `0.1 … 1.0` | `train_element_word_hybrid_<NN>_onhw_wi/ar_transformer__onhw_wi_word_rh` |
 | Hybrid weight-tying | `others/train_hybrid.yaml` | `dual_head.tie.ctc_to_ar_outproj: true` | `train_element_word_hybrid_<NN>_onhw_wi_ctc_to_ar_outproj/ar_transformer__onhw_wi_word_rh` |
-| Hybrid + corruption | `others/train_hybrid.yaml` + `input_corruption` block | both blocks (λ=0.1) | `HybridInputCorruption_<mode>/ar_transformer__onhw_wi_word_rh` |
+| Hybrid + noise injection | `others/train_hybrid.yaml` + `input_corruption` block | both blocks (λ=0.1) | `HybridInputCorruption_<mode>/ar_transformer__onhw_wi_word_rh` |
 
 `self_confusion` additionally needs per-fold confusion matrices at
-`input_corruption.confusion_path`; the other corruption modes are self-contained
-(the bigram table is built from the training labels at runtime).
+`input_corruption.confusion_path`; the other noise-injection modes are
+self-contained (the bigram table is built from the training labels at runtime).
 
 ## Evaluation
 
@@ -163,7 +163,7 @@ hwrformer/              # core library
   model/                #   1D CNN encoder, AR Transformer decoder, Transformer-CTC,
                         #   hybrid dual-head, SDPA gating
   dataset/              #   IMU loaders, augmentations, collation
-  training/             #   train/eval loops (CTC, AR, hybrid, input corruption)
+  training/             #   train/eval loops (CTC, AR, hybrid, noise injection)
   analysis/             #   metrics + encoder-feature analysis
   ctc_decoder.py        #   CTC best-path decoder
 configs/                # train.yaml, test.yaml, others/ (see Training)

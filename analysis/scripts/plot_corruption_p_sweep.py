@@ -6,9 +6,9 @@ CER on left axis (blue), WER on right axis (orange). Dotted vertical line
 marks the recommended default p_ic=0.15. Baseline (no corruption) is the
 left-most x=0.00 point.
 
-Three panels (left to right): OnHW-WI (closed-vocab short), OnHW-WD
-(closed-vocab short, writer-dependent), private sentences (open-vocab,
-long).
+Three panels (left to right): OnHW-WI (small-vocabulary, writer-independent),
+OnHW-WD (small-vocabulary, writer-dependent), and long-context private
+sentences.
 
 Run from anywhere:
     python plot_corruption_p_sweep.py

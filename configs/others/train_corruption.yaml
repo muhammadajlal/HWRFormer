@@ -1,9 +1,11 @@
 # ============================================================================
-# AR HWRFormer + input corruption (exposure-bias remedy). Identical to the AR
-# baseline (configs/train.yaml) plus the input_corruption block below.
+# AR HWRFormer + noise injection (exposure-bias remedy). Identical to the AR
+# baseline (configs/train.yaml) plus the input_corruption block below. (The
+# YAML key stays `input_corruption:` — that's the internal config name the
+# code reads; the filename and key are kept for stability.)
 #   python train_cv.py -c configs/others/train_corruption.yaml
 #
-# Sweep the mode / rate for the paper's corruption study:
+# Sweep the mode / rate for the paper's noise-injection study:
 #   input_corruption.mode     ∈ uniform | bigram_left | bigram_right | self_confusion | adjacent_swap
 #   input_corruption.p_replace ∈ 0.05 0.10 0.15 0.20 0.30
 # (set dir_work per the README knob table so results land where the analysis
