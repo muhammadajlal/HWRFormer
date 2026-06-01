@@ -103,7 +103,7 @@ epochs), and batch size 64. Each fold writes to `<dir_work>/<fold>/`.
 | `configs/train.yaml` | HWRFormer (AR + elementwise SDPA gating) — the headline model |
 | `configs/others/train_rewi_ctc.yaml` | CNN-BiLSTM-CTC baseline (REWI) |
 | `configs/others/train_transformer_ctc.yaml` | Parameter-matched Transformer-CTC |
-| `configs/others/train_corruption.yaml` | AR + noise injection |
+| `configs/others/train_noise_injection.yaml` | AR + noise injection |
 | `configs/others/train_hybrid.yaml` | Hybrid CTC–AR |
 
 ### Reproducing paper experiments
@@ -121,14 +121,14 @@ writer-dependent split.
 | AR, headwise gating | `train.yaml` | `gating_type: headwise` | `Baseline-AR-HeadwiseGating/ar_transformer__onhw_wi_word_rh` |
 | Transformer-CTC | `others/train_transformer_ctc.yaml` | *(as given)* | `Baseline-Transformer-CTC-Matched/transformer__onhw_wi_word_rh` |
 | CNN-BiLSTM-CTC (REWI) | `others/train_rewi_ctc.yaml` | *(as given)* | `blconv_bilstm_wide_no_tokenizer/bilstm_wide__onhw_wi_word_rh` |
-| Noise-injection mode | `others/train_corruption.yaml` | `input_corruption.mode:` `uniform` \| `bigram_left` \| `bigram_right` \| `self_confusion` \| `adjacent_swap` | `Baseline-AR-InputCorruption-<mode>/ar_transformer__onhw_wi_word_rh` |
-| Noise-injection rate sweep | `others/train_corruption.yaml` | `input_corruption.p_replace:` `0.05` \| `0.10` \| `0.15` \| `0.20` \| `0.30` | `Baseline-AR-InputCorruption-Sweep-blconv_b/ar_transformer__onhw_wi_word_rh__p0p<NN>` |
+| Noise-injection mode | `others/train_noise_injection.yaml` | `noise_injection.mode:` `uniform` \| `bigram_left` \| `bigram_right` \| `self_confusion` \| `adjacent_swap` | `Baseline-AR-NoiseInjection-<mode>/ar_transformer__onhw_wi_word_rh` |
+| Noise-injection rate sweep | `others/train_noise_injection.yaml` | `noise_injection.p_replace:` `0.05` \| `0.10` \| `0.15` \| `0.20` \| `0.30` | `Baseline-AR-NoiseInjection-Sweep-blconv_b/ar_transformer__onhw_wi_word_rh__p0p<NN>` |
 | Hybrid λ sweep | `others/train_hybrid.yaml` | `dual_head.lambda_ctc:` `0.1 … 1.0` | `train_element_word_hybrid_<NN>_onhw_wi/ar_transformer__onhw_wi_word_rh` |
 | Hybrid weight-tying | `others/train_hybrid.yaml` | `dual_head.tie.ctc_to_ar_outproj: true` | `train_element_word_hybrid_<NN>_onhw_wi_ctc_to_ar_outproj/ar_transformer__onhw_wi_word_rh` |
-| Hybrid + noise injection | `others/train_hybrid.yaml` + `input_corruption` block | both blocks (λ=0.1) | `HybridInputCorruption_<mode>/ar_transformer__onhw_wi_word_rh` |
+| Hybrid + noise injection | `others/train_hybrid.yaml` + `noise_injection` block | both blocks (λ=0.1) | `HybridNoiseInjection_<mode>/ar_transformer__onhw_wi_word_rh` |
 
 `self_confusion` additionally needs per-fold confusion matrices at
-`input_corruption.confusion_path`; the other noise-injection modes are
+`noise_injection.confusion_path`; the other noise-injection modes are
 self-contained (the bigram table is built from the training labels at runtime).
 
 ## Evaluation
@@ -147,8 +147,8 @@ The paper's figures can be regenerated from the pre-aggregated numbers in
 `HWRFormer.json` without re-running training:
 
 ```bash
-python analysis/scripts/plot_corruption_modes_bars.py    # corruption-mode bar chart
-python analysis/scripts/plot_corruption_p_sweep.py       # p_ic sweep curves
+python analysis/scripts/plot_noise_injection_modes_bars.py    # noise-injection mode bar chart
+python analysis/scripts/plot_noise_injection_p_sweep.py       # p_ic sweep curves
 python analysis/scripts/plot_lambda_sweep.py             # lambda_ctc sweep
 ```
 

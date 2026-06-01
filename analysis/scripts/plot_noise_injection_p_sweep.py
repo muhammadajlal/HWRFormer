@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 """Generate corruption_p_sweep.pdf for paper 2.
 
-Per-dataset panel: CER and WER vs corruption rate p_ic, 5-fold mean.
+Per-dataset panel: CER and WER vs noise-injection rate p_ic, 5-fold mean.
 CER on left axis (blue), WER on right axis (orange). Dotted vertical line
-marks the recommended default p_ic=0.15. Baseline (no corruption) is the
-left-most x=0.00 point.
+marks the recommended default p_ic=0.15. Baseline (no noise injection) is
+the left-most x=0.00 point.
 
 Three panels (left to right): OnHW-WI (small-vocabulary, writer-independent),
 OnHW-WD (small-vocabulary, writer-dependent), and long-context private
 sentences.
 
 Run from anywhere:
-    python plot_corruption_p_sweep.py
+    python plot_noise_injection_p_sweep.py
 """
 from __future__ import annotations
 
@@ -63,11 +63,11 @@ def cell_path(dataset_key: str, p: float) -> Path:
     if p == 0.00:
         return RESULTS / "Baseline-AR-blconv_b" / f"ar_transformer__{dataset_key}"
     if abs(p - 0.15) < 1e-9:
-        return RESULTS / "Baseline-AR-InputCorruption-uniform" / f"ar_transformer__{dataset_key}"
+        return RESULTS / "Baseline-AR-NoiseInjection-uniform" / f"ar_transformer__{dataset_key}"
     pstr = f"p0p{int(round(p * 100)):02d}"
     return (
         RESULTS
-        / "Baseline-AR-InputCorruption-Sweep-blconv_b"
+        / "Baseline-AR-NoiseInjection-Sweep-blconv_b"
         / f"ar_transformer__{dataset_key}__{pstr}"
     )
 

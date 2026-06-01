@@ -54,9 +54,9 @@ test: false
 
 # --- optional: noise injection (AR exposure-bias remedy) --------------------
 # Uncomment to train with noise injection. See the README knob table.
-# (The YAML key stays `input_corruption:` — that's the internal config name
+# (The YAML key stays `noise_injection:` — that's the internal config name
 # the code reads.)
-# input_corruption:
+# noise_injection:
 #   enabled: true
 #   mode: uniform          # uniform | bigram_left | bigram_right | self_confusion | adjacent_swap
 #   p_replace: 0.15        # sweep: 0.05 0.10 0.15 0.20 0.30

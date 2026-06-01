@@ -139,7 +139,7 @@
       "wer_std": 8.17
     }
   },
-  "table4_corruption_modes": {
+  "table4_noise_injection_modes": {
     "onhw_wi_word_rh": {
       "__baseline__": {
         "status": "ready",
@@ -153,7 +153,7 @@
       "uniform": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-uniform/ar_transformer__onhw_wi_word_rh",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-uniform/ar_transformer__onhw_wi_word_rh",
         "cer_mean": 6.86,
         "cer_std": 6.66,
         "wer_mean": 13.04,
@@ -162,7 +162,7 @@
       "bigramright": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-bigramright/ar_transformer__onhw_wi_word_rh",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-bigramright/ar_transformer__onhw_wi_word_rh",
         "cer_mean": 7.89,
         "cer_std": 6.88,
         "wer_mean": 15.59,
@@ -171,7 +171,7 @@
       "bigramleft": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-bigramleft/ar_transformer__onhw_wi_word_rh",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-bigramleft/ar_transformer__onhw_wi_word_rh",
         "cer_mean": 6.82,
         "cer_std": 6.69,
         "wer_mean": 12.97,
@@ -180,7 +180,7 @@
       "selfconf": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-selfconf/ar_transformer__onhw_wi_word_rh",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-selfconf/ar_transformer__onhw_wi_word_rh",
         "cer_mean": 6.95,
         "cer_std": 6.87,
         "wer_mean": 13.74,
@@ -189,7 +189,7 @@
       "adjacentswap": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-adjacentswap/ar_transformer__onhw_wi_word_rh",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-adjacentswap/ar_transformer__onhw_wi_word_rh",
         "cer_mean": 7.35,
         "cer_std": 7.15,
         "wer_mean": 12.1,
@@ -209,7 +209,7 @@
       "uniform": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-uniform/ar_transformer__onhw_wd_word_rh",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-uniform/ar_transformer__onhw_wd_word_rh",
         "cer_mean": 13.52,
         "cer_std": 4.06,
         "wer_mean": 35.98,
@@ -218,7 +218,7 @@
       "bigramright": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-bigramright/ar_transformer__onhw_wd_word_rh",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-bigramright/ar_transformer__onhw_wd_word_rh",
         "cer_mean": 15.01,
         "cer_std": 4.2,
         "wer_mean": 39.63,
@@ -227,7 +227,7 @@
       "bigramleft": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-bigramleft/ar_transformer__onhw_wd_word_rh",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-bigramleft/ar_transformer__onhw_wd_word_rh",
         "cer_mean": 13.63,
         "cer_std": 4.29,
         "wer_mean": 35.58,
@@ -236,7 +236,7 @@
       "selfconf": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-selfconf/ar_transformer__onhw_wd_word_rh",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-selfconf/ar_transformer__onhw_wd_word_rh",
         "cer_mean": 13.61,
         "cer_std": 4.45,
         "wer_mean": 36.49,
@@ -245,7 +245,7 @@
       "adjacentswap": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-adjacentswap/ar_transformer__onhw_wd_word_rh",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-adjacentswap/ar_transformer__onhw_wd_word_rh",
         "cer_mean": 16.44,
         "cer_std": 5.17,
         "wer_mean": 35.88,
@@ -265,7 +265,7 @@
       "uniform": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-uniform/ar_transformer__onhw_equations_wi_word_rh",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-uniform/ar_transformer__onhw_equations_wi_word_rh",
         "cer_mean": 8.91,
         "cer_std": 3.09,
         "wer_mean": 42.96,
@@ -274,7 +274,7 @@
       "bigramright": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-bigramright/ar_transformer__onhw_equations_wi_word_rh",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-bigramright/ar_transformer__onhw_equations_wi_word_rh",
         "cer_mean": 9.25,
         "cer_std": 3.01,
         "wer_mean": 44.02,
@@ -283,7 +283,7 @@
       "bigramleft": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-bigramleft/ar_transformer__onhw_equations_wi_word_rh",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-bigramleft/ar_transformer__onhw_equations_wi_word_rh",
         "cer_mean": 9.31,
         "cer_std": 3.31,
         "wer_mean": 44.47,
@@ -292,7 +292,7 @@
       "selfconf": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-selfconf/ar_transformer__onhw_equations_wi_word_rh",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-selfconf/ar_transformer__onhw_equations_wi_word_rh",
         "cer_mean": 8.99,
         "cer_std": 3.25,
         "wer_mean": 42.82,
@@ -301,7 +301,7 @@
       "adjacentswap": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-adjacentswap/ar_transformer__onhw_equations_wi_word_rh",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-adjacentswap/ar_transformer__onhw_equations_wi_word_rh",
         "cer_mean": 10.94,
         "cer_std": 3.27,
         "wer_mean": 49.08,
@@ -321,7 +321,7 @@
       "uniform": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-uniform/ar_transformer__onhw_equations_wd_word_rh",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-uniform/ar_transformer__onhw_equations_wd_word_rh",
         "cer_mean": 4.05,
         "cer_std": 0.5,
         "wer_mean": 21.54,
@@ -330,7 +330,7 @@
       "bigramright": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-bigramright/ar_transformer__onhw_equations_wd_word_rh",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-bigramright/ar_transformer__onhw_equations_wd_word_rh",
         "cer_mean": 4.2,
         "cer_std": 0.59,
         "wer_mean": 22.62,
@@ -339,7 +339,7 @@
       "bigramleft": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-bigramleft/ar_transformer__onhw_equations_wd_word_rh",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-bigramleft/ar_transformer__onhw_equations_wd_word_rh",
         "cer_mean": 4.07,
         "cer_std": 0.55,
         "wer_mean": 22.16,
@@ -348,7 +348,7 @@
       "selfconf": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-selfconf/ar_transformer__onhw_equations_wd_word_rh",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-selfconf/ar_transformer__onhw_equations_wd_word_rh",
         "cer_mean": 4.0,
         "cer_std": 0.53,
         "wer_mean": 21.52,
@@ -357,7 +357,7 @@
       "adjacentswap": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-adjacentswap/ar_transformer__onhw_equations_wd_word_rh",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-adjacentswap/ar_transformer__onhw_equations_wd_word_rh",
         "cer_mean": 5.97,
         "cer_std": 0.61,
         "wer_mean": 30.67,
@@ -377,7 +377,7 @@
       "uniform": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-uniform/ar_transformer__wi_word_hw6_meta",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-uniform/ar_transformer__wi_word_hw6_meta",
         "cer_mean": 7.79,
         "cer_std": 0.69,
         "wer_mean": 23.39,
@@ -386,7 +386,7 @@
       "bigramright": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-bigramright/ar_transformer__wi_word_hw6_meta",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-bigramright/ar_transformer__wi_word_hw6_meta",
         "cer_mean": 8.29,
         "cer_std": 0.68,
         "wer_mean": 24.91,
@@ -395,7 +395,7 @@
       "bigramleft": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-bigramleft/ar_transformer__wi_word_hw6_meta",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-bigramleft/ar_transformer__wi_word_hw6_meta",
         "cer_mean": 7.98,
         "cer_std": 0.53,
         "wer_mean": 24.24,
@@ -404,7 +404,7 @@
       "selfconf": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-selfconf/ar_transformer__wi_word_hw6_meta",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-selfconf/ar_transformer__wi_word_hw6_meta",
         "cer_mean": 7.96,
         "cer_std": 0.65,
         "wer_mean": 24.5,
@@ -413,7 +413,7 @@
       "adjacentswap": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-adjacentswap/ar_transformer__wi_word_hw6_meta",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-adjacentswap/ar_transformer__wi_word_hw6_meta",
         "cer_mean": 10.64,
         "cer_std": 0.72,
         "wer_mean": 24.61,
@@ -433,7 +433,7 @@
       "uniform": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-uniform/ar_transformer__wi_sent_hw6_meta",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-uniform/ar_transformer__wi_sent_hw6_meta",
         "cer_mean": 7.09,
         "cer_std": 0.78,
         "wer_mean": 18.83,
@@ -442,7 +442,7 @@
       "bigramright": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-bigramright/ar_transformer__wi_sent_hw6_meta",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-bigramright/ar_transformer__wi_sent_hw6_meta",
         "cer_mean": 7.51,
         "cer_std": 0.82,
         "wer_mean": 19.96,
@@ -451,7 +451,7 @@
       "bigramleft": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-bigramleft/ar_transformer__wi_sent_hw6_meta",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-bigramleft/ar_transformer__wi_sent_hw6_meta",
         "cer_mean": 7.18,
         "cer_std": 0.82,
         "wer_mean": 19.61,
@@ -460,7 +460,7 @@
       "selfconf": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-selfconf/ar_transformer__wi_sent_hw6_meta",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-selfconf/ar_transformer__wi_sent_hw6_meta",
         "cer_mean": 7.26,
         "cer_std": 0.79,
         "wer_mean": 19.86,
@@ -469,7 +469,7 @@
       "adjacentswap": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-adjacentswap/ar_transformer__wi_sent_hw6_meta",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-adjacentswap/ar_transformer__wi_sent_hw6_meta",
         "cer_mean": 9.79,
         "cer_std": 1.06,
         "wer_mean": 19.04,
@@ -574,7 +574,7 @@
       "p_0.15": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-uniform/ar_transformer__onhw_wi_word_rh",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-uniform/ar_transformer__onhw_wi_word_rh",
         "cer_mean": 6.86,
         "cer_std": 6.66,
         "wer_mean": 13.04,
@@ -583,7 +583,7 @@
       "p_0.05": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-Sweep-blconv_b/ar_transformer__onhw_wi_word_rh__p0p05",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-Sweep-blconv_b/ar_transformer__onhw_wi_word_rh__p0p05",
         "cer_mean": 6.62,
         "cer_std": 6.83,
         "wer_mean": 11.08,
@@ -592,7 +592,7 @@
       "p_0.10": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-Sweep-blconv_b/ar_transformer__onhw_wi_word_rh__p0p10",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-Sweep-blconv_b/ar_transformer__onhw_wi_word_rh__p0p10",
         "cer_mean": 6.52,
         "cer_std": 6.58,
         "wer_mean": 11.78,
@@ -601,7 +601,7 @@
       "p_0.20": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-Sweep-blconv_b/ar_transformer__onhw_wi_word_rh__p0p20",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-Sweep-blconv_b/ar_transformer__onhw_wi_word_rh__p0p20",
         "cer_mean": 7.22,
         "cer_std": 6.67,
         "wer_mean": 14.62,
@@ -610,7 +610,7 @@
       "p_0.30": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-Sweep-blconv_b/ar_transformer__onhw_wi_word_rh__p0p30",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-Sweep-blconv_b/ar_transformer__onhw_wi_word_rh__p0p30",
         "cer_mean": 8.24,
         "cer_std": 7.09,
         "wer_mean": 17.99,
@@ -621,7 +621,7 @@
       "p_0.15": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-uniform/ar_transformer__onhw_wd_word_rh",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-uniform/ar_transformer__onhw_wd_word_rh",
         "cer_mean": 13.52,
         "cer_std": 4.06,
         "wer_mean": 35.98,
@@ -630,7 +630,7 @@
       "p_0.05": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-Sweep-blconv_b/ar_transformer__onhw_wd_word_rh__p0p05",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-Sweep-blconv_b/ar_transformer__onhw_wd_word_rh__p0p05",
         "cer_mean": 12.56,
         "cer_std": 4.5,
         "wer_mean": 30.29,
@@ -639,7 +639,7 @@
       "p_0.10": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-Sweep-blconv_b/ar_transformer__onhw_wd_word_rh__p0p10",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-Sweep-blconv_b/ar_transformer__onhw_wd_word_rh__p0p10",
         "cer_mean": 13.12,
         "cer_std": 5.01,
         "wer_mean": 33.2,
@@ -648,7 +648,7 @@
       "p_0.20": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-Sweep-blconv_b/ar_transformer__onhw_wd_word_rh__p0p20",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-Sweep-blconv_b/ar_transformer__onhw_wd_word_rh__p0p20",
         "cer_mean": 14.18,
         "cer_std": 4.14,
         "wer_mean": 39.59,
@@ -657,7 +657,7 @@
       "p_0.30": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-Sweep-blconv_b/ar_transformer__onhw_wd_word_rh__p0p30",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-Sweep-blconv_b/ar_transformer__onhw_wd_word_rh__p0p30",
         "cer_mean": 15.46,
         "cer_std": 3.67,
         "wer_mean": 44.87,
@@ -668,7 +668,7 @@
       "p_0.15": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-uniform/ar_transformer__wi_sent_hw6_meta",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-uniform/ar_transformer__wi_sent_hw6_meta",
         "cer_mean": 7.09,
         "cer_std": 0.78,
         "wer_mean": 18.83,
@@ -677,7 +677,7 @@
       "p_0.05": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-Sweep-blconv_b/ar_transformer__wi_sent_hw6_meta__p0p05",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-Sweep-blconv_b/ar_transformer__wi_sent_hw6_meta__p0p05",
         "cer_mean": 6.91,
         "cer_std": 0.87,
         "wer_mean": 15.47,
@@ -686,7 +686,7 @@
       "p_0.10": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-Sweep-blconv_b/ar_transformer__wi_sent_hw6_meta__p0p10",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-Sweep-blconv_b/ar_transformer__wi_sent_hw6_meta__p0p10",
         "cer_mean": 6.84,
         "cer_std": 0.69,
         "wer_mean": 16.95,
@@ -695,7 +695,7 @@
       "p_0.20": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-Sweep-blconv_b/ar_transformer__wi_sent_hw6_meta__p0p20",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-Sweep-blconv_b/ar_transformer__wi_sent_hw6_meta__p0p20",
         "cer_mean": 7.44,
         "cer_std": 0.75,
         "wer_mean": 20.37,
@@ -704,7 +704,7 @@
       "p_0.30": {
         "status": "ready",
         "n_folds": 5,
-        "path": "${REPO}/results/hwr2/Baseline-AR-InputCorruption-Sweep-blconv_b/ar_transformer__wi_sent_hw6_meta__p0p30",
+        "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-Sweep-blconv_b/ar_transformer__wi_sent_hw6_meta__p0p30",
         "cer_mean": 8.87,
         "cer_std": 0.92,
         "wer_mean": 25.42,

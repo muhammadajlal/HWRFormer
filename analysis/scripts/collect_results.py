@@ -138,14 +138,14 @@ def main() -> None:
         "hybrid_weight_tied": cell(RESULTS / "train_element_word_hybrid_01_onhw_wi_ctc_to_ar_outproj/ar_transformer__onhw_wi_word_rh"),
     }
 
-    # ----- Table 4: Corruption modes × 6 datasets -----
-    out["table4_corruption_modes"] = {}
+    # ----- Table 4: Noise-injection modes × 6 datasets -----
+    out["table4_noise_injection_modes"] = {}
     MODE_DIR = {
-        "uniform":      "Baseline-AR-InputCorruption-uniform",
-        "bigramright":  "Baseline-AR-InputCorruption-bigramright",
-        "bigramleft":   "Baseline-AR-InputCorruption-bigramleft",
-        "selfconf":     "Baseline-AR-InputCorruption-selfconf",
-        "adjacentswap": "Baseline-AR-InputCorruption-adjacentswap",
+        "uniform":      "Baseline-AR-NoiseInjection-uniform",
+        "bigramright":  "Baseline-AR-NoiseInjection-bigramright",
+        "bigramleft":   "Baseline-AR-NoiseInjection-bigramleft",
+        "selfconf":     "Baseline-AR-NoiseInjection-selfconf",
+        "adjacentswap": "Baseline-AR-NoiseInjection-adjacentswap",
     }
     BASELINE_DIR = {
         "onhw_wi_word_rh":           "Baseline-AR-blconv_b",
@@ -156,13 +156,13 @@ def main() -> None:
         "wi_sent_hw6_meta":          "Baseline-AR-blconv_b",
     }
     for dataset, _label in DATASET_LABELS.items():
-        out["table4_corruption_modes"][dataset] = {}
-        # No-corruption baseline
-        out["table4_corruption_modes"][dataset]["__baseline__"] = cell(
+        out["table4_noise_injection_modes"][dataset] = {}
+        # No-noise-injection baseline
+        out["table4_noise_injection_modes"][dataset]["__baseline__"] = cell(
             RESULTS / BASELINE_DIR[dataset] / f"ar_transformer__{dataset}"
         )
         for mode, mode_root in MODE_DIR.items():
-            out["table4_corruption_modes"][dataset][mode] = cell(
+            out["table4_noise_injection_modes"][dataset][mode] = cell(
                 RESULTS / mode_root / f"ar_transformer__{dataset}"
             )
 
@@ -177,13 +177,13 @@ def main() -> None:
     out["figure_pic_sweep"] = {}
     for dataset_key in ["onhw_wi_word_rh", "onhw_wd_word_rh", "wi_sent_hw6_meta"]:
         out["figure_pic_sweep"][dataset_key] = {}
-        # p=0.15 is the main uniform corruption run
+        # p=0.15 is the main uniform noise-injection run
         out["figure_pic_sweep"][dataset_key]["p_0.15"] = cell(
-            RESULTS / "Baseline-AR-InputCorruption-uniform" / f"ar_transformer__{dataset_key}"
+            RESULTS / "Baseline-AR-NoiseInjection-uniform" / f"ar_transformer__{dataset_key}"
         )
         for p in (0.05, 0.10, 0.20, 0.30):
             pstr = f"p0p{int(round(p*100)):02d}"
-            d = RESULTS / "Baseline-AR-InputCorruption-Sweep-blconv_b" / f"ar_transformer__{dataset_key}__{pstr}"
+            d = RESULTS / "Baseline-AR-NoiseInjection-Sweep-blconv_b" / f"ar_transformer__{dataset_key}__{pstr}"
             out["figure_pic_sweep"][dataset_key][f"p_{p:.2f}"] = cell(d)
 
     # ----- Summary -----

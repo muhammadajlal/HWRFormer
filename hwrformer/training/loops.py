@@ -44,7 +44,7 @@ def _build_bigram_lookup(
     any training label, increment counts[X, Y]. Apply add-`smoothing` Laplace
     smoothing then row-normalize so each row sums to 1. Special tokens
     (PAD, BOS, EOS) and CTC-blank index 0 are excluded from both X and Y so
-    that corruption never selects or is conditioned on them.
+    that noise injection never selects or is conditioned on them.
 
     Returns
     -------
@@ -194,7 +194,7 @@ def train_one_epoch(
     else:
         ss_p_eff = 0.0
 
-    # Input token corruption (Bowman 2016 / Iyyer 2015 word-dropout style):
+    # Input-token noise injection (Bowman 2016 / Iyyer 2015 word-dropout style):
     # keep teacher forcing on the loss side, but corrupt the decoder input via
     # one of several configurable mechanisms. Five modes:
     #   uniform        — replacement drawn uniformly over real characters
@@ -209,13 +209,13 @@ def train_one_epoch(
     #   adjacent_swap  — instead of a substitution, swap (y_inp[t], y_inp[t+1])
     #                    with probability p_replace; captures transposition-style
     #                    errors common in handwriting
-    ic_cfg = getattr(man.cfgs, "input_corruption", {}) or {}
+    ic_cfg = getattr(man.cfgs, "noise_injection", {}) or {}
     ic_enabled = bool(ic_cfg.get("enabled", False))
     ic_p = float(ic_cfg.get("p_replace", 0.0))
     ic_mode = str(ic_cfg.get("mode", "uniform")).lower()
     if ic_enabled and ss_enabled:
         raise ValueError(
-            "input_corruption and scheduled_sampling cannot both be enabled — "
+            "noise_injection and scheduled_sampling cannot both be enabled — "
             "they are alternative no-TF strategies."
         )
     # Replacement vocabulary: indices [1, min(PAD,BOS,EOS)) — real characters only,
@@ -224,7 +224,7 @@ def train_one_epoch(
     ic_hi = min(PAD_ID, BOS_ID, EOS_ID)
     if ic_enabled and ic_p > 0.0 and ic_hi <= ic_lo:
         raise ValueError(
-            f"input_corruption: cannot determine a valid replacement vocab range "
+            f"noise_injection: cannot determine a valid replacement vocab range "
             f"(lo={ic_lo}, hi={ic_hi}). Check tokenizer special token IDs."
         )
 
@@ -243,7 +243,7 @@ def train_one_epoch(
         else:
             vocab_size = int(model.num_cls) if hasattr(model, "num_cls") else int(getattr(man.cfgs, "num_cls", 0))
             if vocab_size <= 0:
-                raise RuntimeError("input_corruption: cannot infer vocab_size from model")
+                raise RuntimeError("noise_injection: cannot infer vocab_size from model")
             ic_smoothing = float(ic_cfg.get("smoothing", 1.0))
             spec_ids = (PAD_ID, BOS_ID, EOS_ID, 0)  # also exclude CTC-blank index 0
             if ic_mode in ("bigram_right", "bigram_left"):
@@ -255,8 +255,8 @@ def train_one_epoch(
                 conf_path_template = ic_cfg.get("confusion_path", None)
                 if conf_path_template is None:
                     raise ValueError(
-                        "input_corruption mode=self_confusion requires "
-                        "input_corruption.confusion_path (with {fold} placeholder)"
+                        "noise_injection mode=self_confusion requires "
+                        "noise_injection.confusion_path (with {fold} placeholder)"
                     )
                 ic_lookup = _load_confusion_lookup(
                     conf_path_template, fold=int(getattr(man.cfgs, "idx_fold", 0)),
@@ -266,14 +266,14 @@ def train_one_epoch(
             setattr(man, cache_attr, ic_lookup)
     elif ic_enabled and ic_p > 0.0 and ic_mode not in ("uniform", "adjacent_swap") + _SUB_MODES:
         raise ValueError(
-            f"input_corruption.mode must be one of "
+            f"noise_injection.mode must be one of "
             f"{{uniform, bigram_right, bigram_left, self_confusion, adjacent_swap}}, "
             f"got: {ic_mode}"
         )
 
     if ic_enabled and ic_p > 0.0:
         man.log(
-            f"[InputCorruption] epoch={epoch} | mode={ic_mode} | p_replace={ic_p:.4f} "
+            f"[NoiseInjection] epoch={epoch} | mode={ic_mode} | p_replace={ic_p:.4f} "
             f"(replacement_vocab=[{ic_lo}, {ic_hi}))"
         )
 
@@ -303,9 +303,9 @@ def train_one_epoch(
                     sample_mask[:, 0] = False  # never replace BOS
                     y_inp = torch.where(sample_mask, shifted, y_inp)
 
-                # Input corruption: corrupt a fraction of non-special input tokens.
+                # Noise injection: corrupt a fraction of non-special input tokens.
                 # The CE loss is still computed against the unmodified y_tgt. The
-                # corruption mechanism is selected by ic_mode.
+                # noise-injection mechanism is selected by ic_mode.
                 # NOTE: never name a local `idx` here — that would shadow the
                 # outer enumerate(dataloader) counter and break man.update_iteration.
                 if ic_enabled and ic_p > 0.0:
@@ -496,11 +496,11 @@ def train_one_epoch_hybrid(
 
     clip_grad = float(getattr(man.cfgs, "clip_grad", 5.0) or 5.0)
 
-    # ---- Input corruption setup (hybrid). Mirrors `train_one_epoch`. ------------
+    # ---- Noise-injection setup (hybrid). Mirrors `train_one_epoch`. ------------
     # Applies the same regularization to the AR head's y_inp; the CTC head is
     # untouched (CTC has no teacher-forced input). Scheduled sampling is NOT
-    # supported in the hybrid loop yet (only input_corruption).
-    ic_cfg = getattr(man.cfgs, "input_corruption", {}) or {}
+    # supported in the hybrid loop yet (only noise_injection).
+    ic_cfg = getattr(man.cfgs, "noise_injection", {}) or {}
     ic_enabled = bool(ic_cfg.get("enabled", False))
     ic_p = float(ic_cfg.get("p_replace", 0.0))
     ic_mode = str(ic_cfg.get("mode", "uniform")).lower()
@@ -508,7 +508,7 @@ def train_one_epoch_hybrid(
     ic_hi = min(PAD_ID, BOS_ID, EOS_ID)
     if ic_enabled and ic_p > 0.0 and ic_hi <= ic_lo:
         raise ValueError(
-            f"input_corruption: cannot determine a valid replacement vocab range "
+            f"noise_injection: cannot determine a valid replacement vocab range "
             f"(lo={ic_lo}, hi={ic_hi}). Check tokenizer special token IDs."
         )
 
@@ -524,7 +524,7 @@ def train_one_epoch_hybrid(
             vocab_size = int(getattr(model, "vocab_ar", 0)) or int(getattr(model, "num_cls", 0)) \
                 or int(getattr(man.cfgs, "num_cls", 0))
             if vocab_size <= 0:
-                raise RuntimeError("input_corruption: cannot infer vocab_size from model")
+                raise RuntimeError("noise_injection: cannot infer vocab_size from model")
             ic_smoothing = float(ic_cfg.get("smoothing", 1.0))
             spec_ids = (PAD_ID, BOS_ID, EOS_ID, 0)
             if ic_mode in ("bigram_right", "bigram_left"):
@@ -536,8 +536,8 @@ def train_one_epoch_hybrid(
                 conf_path_template = ic_cfg.get("confusion_path", None)
                 if conf_path_template is None:
                     raise ValueError(
-                        "input_corruption mode=self_confusion requires "
-                        "input_corruption.confusion_path (with {fold} placeholder)"
+                        "noise_injection mode=self_confusion requires "
+                        "noise_injection.confusion_path (with {fold} placeholder)"
                     )
                 ic_lookup = _load_confusion_lookup(
                     conf_path_template, fold=int(getattr(man.cfgs, "idx_fold", 0)),
@@ -547,14 +547,14 @@ def train_one_epoch_hybrid(
             setattr(man, cache_attr, ic_lookup)
     elif ic_enabled and ic_p > 0.0 and ic_mode not in ("uniform", "adjacent_swap") + _SUB_MODES_H:
         raise ValueError(
-            f"input_corruption.mode must be one of "
+            f"noise_injection.mode must be one of "
             f"{{uniform, bigram_right, bigram_left, self_confusion, adjacent_swap}}, "
             f"got: {ic_mode}"
         )
 
     if ic_enabled and ic_p > 0.0:
         man.log(
-            f"[InputCorruption][hybrid] epoch={epoch} | mode={ic_mode} | p_replace={ic_p:.4f} "
+            f"[NoiseInjection][hybrid] epoch={epoch} | mode={ic_mode} | p_replace={ic_p:.4f} "
             f"(replacement_vocab=[{ic_lo}, {ic_hi}))"
         )
     # ----------------------------------------------------------------------------
@@ -610,7 +610,7 @@ def train_one_epoch_hybrid(
                     )
                 continue
 
-            # ---- Input corruption (hybrid AR head only) ------------------------
+            # ---- Noise injection (hybrid AR head only) ------------------------
             # The AR CE loss is computed against the unmodified y_tgt; the CTC
             # loss is unaffected (encoder output, no teacher-forced input).
             if ic_enabled and ic_p > 0.0:

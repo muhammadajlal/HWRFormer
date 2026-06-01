@@ -2,16 +2,16 @@
 """Generate corruption_modes_bars.pdf for paper 2.
 
 Grouped bar chart: one cluster per dataset (6 datasets), within each
-cluster the 5 corruption modes are ordered by CER descending so the
-worst mode is leftmost and the best mode rightmost. The no-corruption
+cluster the 5 noise-injection modes are ordered by CER descending so the
+worst mode is leftmost and the best mode rightmost. The no-noise-injection
 baseline is overlaid as a dashed horizontal line per cluster so the
-reader can read "did corruption help on this dataset?" at a glance.
+reader can read "did noise injection help on this dataset?" at a glance.
 
-Data source: results/hwr2/Baseline-AR-InputCorruption-* and
+Data source: results/hwr2/Baseline-AR-NoiseInjection-* and
 Baseline-AR-ElementwiseGating[-WD|-Equations-{WI,WD}], 5-fold mean.
 
 Run from anywhere:
-    python plot_corruption_modes_bars.py
+    python plot_noise_injection_modes_bars.py
 """
 from __future__ import annotations
 
@@ -48,14 +48,14 @@ MODES: list[tuple[str, str, str]] = [
     ("adjacentswap", "adjacent-swap",  "#d62728"),
 ]
 
-# Layout: one corruption-mode directory per mode, with per-dataset
+# Layout: one noise-injection-mode directory per mode, with per-dataset
 # subdirs inside (these dirs cover all 6 datasets uniformly). Baseline
-# (no corruption) is the
+# (no noise injection) is the
 # elementwise-gating run under Baseline-AR-blconv_b/.
 def mode_dir(mode_key: str, dataset_key: str) -> Path:
     return (
         RESULTS_ROOT
-        / f"Baseline-AR-InputCorruption-{mode_key}"
+        / f"Baseline-AR-NoiseInjection-{mode_key}"
         / f"ar_transformer__{dataset_key}"
     )
 
@@ -154,7 +154,7 @@ def main() -> None:
 
     handles = [Patch(facecolor=c, edgecolor="black", label=lab) for _, lab, c in MODES]
     handles.append(
-        Line2D([], [], color="black", linestyle="dashed", linewidth=1.1, label="no corruption")
+        Line2D([], [], color="black", linestyle="dashed", linewidth=1.1, label="no noise injection")
     )
     ax.legend(
         handles=handles,
