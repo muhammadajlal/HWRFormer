@@ -27,25 +27,45 @@ the optional weight-tying ablation.*
 and writer-dependent). CER/WER in %, lower is better; **bold** = best per column.
 MACs are reported at greedy AR decoding `len_max = 6`.
 
-**Architecture migration — CTC baseline → HWRFormer.**
+**Architecture migration — CTC baseline → HWRFormer.** Cells show 5-fold mean ± across-fold sample std (n=5).
 
 | Model | Obj. | Gating | WI CER | WI WER | WD CER | WD WER | #Params | MACs |
 |---|---|---|---|---|---|---|---|---|
-| REWI (CNN-BiLSTM) | CTC | — | 7.30 | 15.16 | **14.81** | 44.77 | 4.64M | **413M** |
-| HWRFormer | AR | — | 7.10 | **10.39** | 16.47 | 32.07 | 4.57M | 653M |
-| HWRFormer | AR | elementwise | **6.94** | 10.50 | 16.31 | 31.87 | 4.64M | 669M |
-| HWRFormer | AR | headwise | 6.99 | 10.47 | 15.70 | **31.08** | 4.57M | 667M |
+| REWI (CNN-BiLSTM) | CTC | — | 7.30 ± 6.85 | 15.16 ± 10.05 | **14.81** ± 3.84 | 44.77 ± 7.84 | 4.64M | **413M** |
+| HWRFormer | AR | — | 7.10 ± 7.15 | **10.39** ± 8.08 | 16.47 ± 5.73 | 32.07 ± 9.21 | 4.57M | 653M |
+| HWRFormer | AR | elementwise | **6.94** ± 7.10 | 10.50 ± 8.26 | 16.31 ± 6.20 | 31.87 ± 9.31 | 4.64M | 669M |
+| HWRFormer | AR | headwise | 6.99 ± 7.19 | 10.47 ± 8.42 | 15.70 ± 5.91 | **31.08** ± 9.25 | 4.57M | 667M |
 
-**Exposure-bias interventions** (CER / WER), HWRFormer = elementwise-gated AR.
+**Exposure-bias interventions** (CER / WER, mean ± std), HWRFormer = elementwise-gated AR.
 
 | Dataset | REWI | HWRFormer | + Noise inj. | + Hybrid | + Hybrid + Noise inj. |
 |---|---|---|---|---|---|
-| OnHW-words500 (WI) | 7.30 / 15.16 | 6.94 / 10.50 | 6.86 / 13.04 | 6.83 / **10.17** | **6.70** / 12.93 |
-| OnHW-words500 (WD) | 14.81 / 44.77 | 16.31 / 31.87 | 13.52 / 35.98 | 13.39 / **27.42** | **11.49** / 31.72 |
+| OnHW-words500 (WI) | 7.30 / 15.16<br>±6.85 / ±10.05 | 6.94 / 10.50<br>±7.10 / ±8.26 | 6.86 / 13.04<br>±6.66 / ±8.82 | 6.83 / **10.17**<br>±7.10 / ±8.20 | **6.70** / 12.93<br>±6.64 / ±9.21 |
+| OnHW-words500 (WD) | 14.81 / 44.77<br>±3.84 / ±7.84 | 16.31 / 31.87<br>±6.20 / ±9.31 | 13.52 / 35.98<br>±4.06 / ±6.17 | 13.39 / **27.42**<br>±5.70 / ±9.28 | **11.49** / 31.72<br>±3.99 / ±6.42 |
 
-OnHW fold difficulty varies strongly (across-fold std ≈ 7 pp on WI, 4–6 pp on
-WD), so sub-percentage-point differences are within fold noise. See the
+The large OnHW WI deviations reflect across-writer difficulty variation rather
+than training instability (individual folds range from ~1 to ~15 % CER on WI),
+so sub-percentage-point differences on WI are within fold noise. See the
 "Reproducing paper experiments" table below to regenerate any cell.
+
+**Direct exposure-bias probe** (CER, %; mean over 5 folds). Each saved checkpoint
+is re-evaluated under two decoding regimes: **w/ TF** feeds the ground-truth
+prefix at every step (per-position argmax); **w/o TF** is the greedy decoder
+that feeds its own previous prediction back in (the inference path used in
+the tables above). The jump from w/ TF to w/o TF is the prefix-drift cost
+and is the direct exposure-bias signal.
+
+| Training | OnHW (WI) w/ TF | OnHW (WI) w/o TF | OnHW (WD) w/ TF | OnHW (WD) w/o TF |
+|---|---|---|---|---|
+| HWRFormer (AR) | 2.76 | 6.95 | 10.91 | 16.31 |
+| + Noise inj. | 5.23 | 6.86 | 11.76 | 13.52 |
+| + Hybrid | 2.77 | 6.83 | 9.86 | 13.38 |
+| + Hybrid + Noise inj. | 5.33 | 6.70 | 10.33 | 11.48 |
+
+Noise injection compresses the w/ TF → w/o TF jump on both public splits and on
+the private subsets reported in the paper. Hybrid CTC–AR alone barely changes
+the jump, consistent with its role as an encoder-side regularizer. Reproduce
+with `eval_tf_gap.py` (see the Evaluation section).
 
 ## Installation
 
@@ -125,6 +145,7 @@ writer-dependent split.
 | Hybrid λ sweep | `others/train_hybrid.yaml` | `dual_head.lambda_ctc:` `0.1 … 1.0` | `train_element_word_hybrid_<NN>_onhw_wi/ar_transformer__onhw_wi_word_rh` |
 | Hybrid weight-tying | `others/train_hybrid.yaml` | `dual_head.tie.ctc_to_ar_outproj: true` | `train_element_word_hybrid_<NN>_onhw_wi_ctc_to_ar_outproj/ar_transformer__onhw_wi_word_rh` |
 | Hybrid + noise injection | `others/train_hybrid.yaml` + `noise_injection` block | both blocks (λ=0.1) | `HybridNoiseInjection_<mode>/ar_transformer__onhw_wi_word_rh` |
+| Exposure-bias probe (Table 3) | any saved fold checkpoint | *(no training; run `eval_tf_gap.py`, see Evaluation)* | writes `eval_tf_gap.json` next to the fold's `train.yaml` |
 
 `self_confusion` additionally needs per-fold confusion matrices at
 `noise_injection.confusion_path`; the other noise-injection modes are
@@ -142,6 +163,18 @@ python evaluate.py -c configs/train.yaml
 To re-score a single trained checkpoint, edit `configs/test.yaml` (`checkpoint`,
 `idx_fold`) and run `python main.py -c configs/test.yaml`.
 
+**Direct exposure-bias probe (Table 3).** For a saved fold checkpoint, run
+
+```bash
+python eval_tf_gap.py -c <dir_work>/<fold>/<fold>/train.yaml \
+    --checkpoint <dir_work>/<fold>/<fold>/checkpoints/best_cer.pth
+```
+
+to compute teacher-forced (w/ TF) vs.\ greedy decoding without teacher forcing
+(w/o TF) on the same checkpoint. The script writes `eval_tf_gap.json` next to
+the YAML, with per-condition CER/WER and the w/ TF → w/o TF gap. Sweeping
+across all folds and training conditions reproduces Table 3 of the paper.
+
 The paper's figures can be regenerated from the pre-aggregated numbers in
 `HWRFormer.json` without re-running training:
 
@@ -157,6 +190,7 @@ python analysis/scripts/plot_lambda_sweep.py             # lambda_ctc sweep
 main.py                 # train / evaluate one fold
 train_cv.py             # run all cross-validation folds sequentially
 evaluate.py             # 5-fold aggregation + params/MACs
+eval_tf_gap.py          # direct exposure-bias probe (w/ TF vs. w/o TF, Table 3)
 onhw.ipynb              # OnHW -> MSCOCO-like dataset conversion
 hwrformer/              # core library
   model/                #   1D CNN encoder, AR Transformer decoder, Transformer-CTC,
