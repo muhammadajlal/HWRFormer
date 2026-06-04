@@ -48,23 +48,26 @@ from ~1 to ~15 % CER), so sub-percentage-point differences on WI are within
 fold noise. The paper reports the full 5-fold mean ± std; `evaluate.py`
 regenerates both. See the "Reproducing paper experiments" table below.
 
-**Direct exposure-bias probe** (CER, %; mean over 5 folds). Each saved checkpoint
-is re-evaluated under two decoding regimes: **w/ TF** feeds the ground-truth
-prefix at every step (per-position argmax); **w/o TF** is the greedy decoder
-that feeds its own previous prediction back in (the inference path used in
-the tables above). The jump from w/ TF to w/o TF is the prefix-drift cost
-and is the direct exposure-bias signal.
+**Direct exposure-bias probe** (CER, %; 5-fold mean). Each saved checkpoint is
+decoded with teacher forcing (**w/ TF**: ground-truth prefix at every step) and
+without (**w/o TF**: greedy decoding that feeds its own prediction back in, the
+inference path used in the tables above). **Gap red.** is the percentage by
+which a training intervention shrinks the `w/o TF − w/ TF` gap relative to plain
+HWRFormer on that split — higher means more of the exposure-bias gap removed.
+✓ marks the active intervention; the first row is plain HWRFormer (AR). Largest
+reduction per split in **bold**.
 
-| Training | OnHW (WI) w/ TF | OnHW (WI) w/o TF | OnHW (WD) w/ TF | OnHW (WD) w/o TF |
-|---|---|---|---|---|
-| HWRFormer (AR) | 2.76 | 6.95 | 10.91 | 16.31 |
-| + Noise inj. | 5.23 | 6.86 | 11.76 | 13.52 |
-| + Hybrid | 2.77 | 6.83 | 9.86 | 13.38 |
-| + Hybrid + Noise inj. | 5.33 | 6.70 | 10.33 | 11.48 |
+| Noise | Hybrid | WD w/ TF | WD w/o TF | WD Gap red. | WI w/ TF | WI w/o TF | WI Gap red. |
+|:-:|:-:|--:|--:|--:|--:|--:|--:|
+|   |   | 10.91 | 16.31 | 0.0% | 2.76 | 6.95 | 0.0% |
+| ✓ |   | 11.76 | 13.52 | 67.4% | 5.23 | 6.86 | 61.1% |
+|   | ✓ | 9.86 | 13.38 | 34.8% | 2.77 | 6.83 | 3.1% |
+| ✓ | ✓ | 10.33 | 11.48 | **78.7%** | 5.33 | 6.70 | **67.3%** |
 
-Noise injection compresses the w/ TF → w/o TF jump on both public splits and on
-the private subsets reported in the paper. Hybrid CTC–AR alone barely changes
-the jump, consistent with its role as an encoder-side regularizer. Reproduce
+Noise injection removes most of the exposure-bias gap on both public splits
+(61–67 % WI, 67–79 % WD), while hybrid CTC–AR alone barely changes it
+(3 % WI, 35 % WD), consistent with its role as an encoder-side regularizer.
+The paper additionally reports the private word and sentence splits. Reproduce
 with `eval_tf_gap.py` (see the Evaluation section).
 
 ## Installation
