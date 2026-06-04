@@ -27,26 +27,26 @@ the optional weight-tying ablation.*
 and writer-dependent). CER/WER in %, lower is better; **bold** = best per column.
 MACs are reported at greedy AR decoding `len_max = 6`.
 
-**Architecture migration — CTC baseline → HWRFormer.** Cells show 5-fold mean ± across-fold sample std (n=5).
+**Architecture migration — CTC baseline → HWRFormer.**
 
 | Model | Obj. | Gating | WI CER | WI WER | WD CER | WD WER | #Params | MACs |
 |---|---|---|---|---|---|---|---|---|
-| REWI (CNN-BiLSTM) | CTC | — | 7.30 ± 6.85 | 15.16 ± 10.05 | **14.81** ± 3.84 | 44.77 ± 7.84 | 4.64M | **413M** |
-| HWRFormer | AR | — | 7.10 ± 7.15 | **10.39** ± 8.08 | 16.47 ± 5.73 | 32.07 ± 9.21 | 4.57M | 653M |
-| HWRFormer | AR | elementwise | **6.94** ± 7.10 | 10.50 ± 8.26 | 16.31 ± 6.20 | 31.87 ± 9.31 | 4.64M | 669M |
-| HWRFormer | AR | headwise | 6.99 ± 7.19 | 10.47 ± 8.42 | 15.70 ± 5.91 | **31.08** ± 9.25 | 4.57M | 667M |
+| REWI (CNN-BiLSTM) | CTC | — | 7.30 | 15.16 | **14.81** | 44.77 | 4.64M | **413M** |
+| HWRFormer | AR | — | 7.10 | **10.39** | 16.47 | 32.07 | 4.57M | 653M |
+| HWRFormer | AR | elementwise | **6.94** | 10.50 | 16.31 | 31.87 | 4.64M | 669M |
+| HWRFormer | AR | headwise | 6.99 | 10.47 | 15.70 | **31.08** | 4.57M | 667M |
 
-**Exposure-bias interventions** (CER / WER, mean ± std), HWRFormer = elementwise-gated AR.
+**Exposure-bias interventions** (CER / WER), HWRFormer = elementwise-gated AR.
 
 | Dataset | REWI | HWRFormer | + Noise inj. | + Hybrid | + Hybrid + Noise inj. |
 |---|---|---|---|---|---|
-| OnHW-words500 (WI) | 7.30 / 15.16<br>±6.85 / ±10.05 | 6.94 / 10.50<br>±7.10 / ±8.26 | 6.86 / 13.04<br>±6.66 / ±8.82 | 6.83 / **10.17**<br>±7.10 / ±8.20 | **6.70** / 12.93<br>±6.64 / ±9.21 |
-| OnHW-words500 (WD) | 14.81 / 44.77<br>±3.84 / ±7.84 | 16.31 / 31.87<br>±6.20 / ±9.31 | 13.52 / 35.98<br>±4.06 / ±6.17 | 13.39 / **27.42**<br>±5.70 / ±9.28 | **11.49** / 31.72<br>±3.99 / ±6.42 |
+| OnHW-words500 (WI) | 7.30 / 15.16 | 6.94 / 10.50 | 6.86 / 13.04 | 6.83 / **10.17** | **6.70** / 12.93 |
+| OnHW-words500 (WD) | 14.81 / 44.77 | 16.31 / 31.87 | 13.52 / 35.98 | 13.39 / **27.42** | **11.49** / 31.72 |
 
-The large OnHW WI deviations reflect across-writer difficulty variation rather
-than training instability (individual folds range from ~1 to ~15 % CER on WI),
-so sub-percentage-point differences on WI are within fold noise. See the
-"Reproducing paper experiments" table below to regenerate any cell.
+OnHW WI fold difficulty varies strongly across writers (individual folds range
+from ~1 to ~15 % CER), so sub-percentage-point differences on WI are within
+fold noise. The paper reports the full 5-fold mean ± std; `evaluate.py`
+regenerates both. See the "Reproducing paper experiments" table below.
 
 **Direct exposure-bias probe** (CER, %; mean over 5 folds). Each saved checkpoint
 is re-evaluated under two decoding regimes: **w/ TF** feeds the ground-truth
