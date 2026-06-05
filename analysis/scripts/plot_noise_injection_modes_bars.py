@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
-"""Generate corruption_modes_bars.pdf for paper 2.
+"""Generate corruption_modes_bars.pdf for the paper.
 
-Grouped bar chart: one cluster per dataset (6 datasets), within each
-cluster the 5 noise-injection modes are ordered by CER descending so the
-worst mode is leftmost and the best mode rightmost. The no-noise-injection
-baseline is overlaid as a dashed horizontal line per cluster so the
-reader can read "did noise injection help on this dataset?" at a glance.
+Grouped bar chart: one cluster per dataset. Each cluster uses a fixed
+left-to-right order: baseline, uniform, bigram-right, bigram-left,
+self-confusion, adjacent-swap. The fixed order keeps the mode comparison
+visually stable across datasets, and the no-noise-injection baseline is the
+leftmost (grey) bar in every cluster.
 
-Data source: results/hwr2/Baseline-AR-NoiseInjection-* and
-Baseline-AR-ElementwiseGating[-WD|-Equations-{WI,WD}], 5-fold mean.
+Data source: results/hwr2/Baseline-AR-NoiseInjection-* and the no-noise
+Baseline-AR-blconv_b run, 5-fold mean CER. Export ``REPO`` first
+(``export REPO=$(pwd)``) so the result paths resolve.
 
 Run from anywhere:
     python plot_noise_injection_modes_bars.py
@@ -17,20 +18,18 @@ from __future__ import annotations
 
 import glob
 import json
+import os
 from pathlib import Path
 
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 
-RESULTS_ROOT = Path("${REPO}/results/hwr2")
-OUT_PDF = Path(
-    "${REPO}/publications/paper2_lncs_overleaf/"
-    "figures/corruption_modes_bars.pdf"
-)
+REPO = Path(os.environ.get("REPO", Path(__file__).resolve().parents[2]))
+RESULTS_ROOT = REPO / "results" / "hwr2"
+OUT_PDF = REPO / "publications" / "paper2_lncs_overleaf" / "figures" / "corruption_modes_bars.pdf"
 
 DATASETS: list[tuple[str, str]] = [
     ("onhw_wi_word_rh",  "OnHW-WI"),
@@ -48,10 +47,13 @@ MODES: list[tuple[str, str, str]] = [
     ("adjacentswap", "adjacent-swap",  "#d62728"),
 ]
 
-# Layout: one noise-injection-mode directory per mode, with per-dataset
-# subdirs inside (these dirs cover all 6 datasets uniformly). Baseline
-# (no noise injection) is the
-# elementwise-gating run under Baseline-AR-blconv_b/.
+# Fixed left-to-right series: no-noise baseline first, then the five modes.
+SERIES: list[tuple[str, str, str]] = [
+    ("__baseline__", "baseline", "#7f7f7f"),
+    *MODES,
+]
+
+
 def mode_dir(mode_key: str, dataset_key: str) -> Path:
     return (
         RESULTS_ROOT
@@ -91,76 +93,38 @@ def main() -> None:
         if missing:
             print(f"WARN: dataset {ds_key} missing modes: {missing}")
 
-    fig, ax = plt.subplots(figsize=(11.5, 3.8))
-    color_by_mode = {k: c for k, _, c in MODES}
-    n_modes = len(MODES)
-    group_w = 0.84
-    bar_w = group_w / n_modes
+    fig, ax = plt.subplots(figsize=(11.2, 3.5))
+    group_w = 0.90
+    bar_w = group_w / len(SERIES)
 
-    # Headroom is set wide enough that vertical (rotated) bar labels
-    # fit above the bars without being clipped by the top spine.
     all_cers: list[float] = []
     for row in data.values():
-        for v in row.values():
-            if v is not None:
-                all_cers.append(v)
-    ymax = max(all_cers) * 1.32 if all_cers else 1.0
-    label_offset = ymax * 0.012
+        all_cers.extend(v for v in row.values() if v is not None)
+    ymax = max(all_cers) * 1.15 if all_cers else 1.0
 
     x = np.arange(len(DATASETS))
     for ds_idx, (ds_key, _ds_label) in enumerate(DATASETS):
         row = data[ds_key]
-        mode_keys = [k for k, _, _ in MODES]
-        present = [m for m in mode_keys if row[m] is not None]
-        # Descending by CER (worst leftmost, best rightmost)
-        present.sort(key=lambda m: -row[m])  # type: ignore[operator]
-        bcer = row["__baseline__"]
-        for j, m in enumerate(present):
-            cer = row[m]
+        for j, (key, _label, color) in enumerate(SERIES):
+            cer = row.get(key)
+            if cer is None:
+                continue
             pos = x[ds_idx] - group_w / 2 + (j + 0.5) * bar_w
             ax.bar(
                 pos,
                 cer,
-                bar_w * 0.94,
-                color=color_by_mode[m],
+                bar_w * 0.92,
+                color=color,
                 edgecolor="black",
-                linewidth=0.4,
-            )
-            # Anchor each label above max(bar_top, baseline) and
-            # rotate vertical so adjacent labels in a tight cluster do
-            # not overlap horizontally. Vertical orientation also means
-            # the label cannot collide with the dashed baseline line.
-            anchor = max(cer, bcer) if bcer is not None else cer
-            ax.text(
-                pos,
-                anchor + label_offset,
-                f"{cer:.2f}",
-                ha="center",
-                va="bottom",
-                fontsize=8.0,
-                color="black",
-                rotation=90,
-            )
-        if bcer is not None:
-            ax.hlines(
-                bcer,
-                x[ds_idx] - group_w / 2,
-                x[ds_idx] + group_w / 2,
-                colors="black",
-                linestyles="dashed",
-                linewidth=1.1,
-                zorder=4,
+                linewidth=0.45,
             )
 
-    handles = [Patch(facecolor=c, edgecolor="black", label=lab) for _, lab, c in MODES]
-    handles.append(
-        Line2D([], [], color="black", linestyle="dashed", linewidth=1.1, label="no noise injection")
-    )
+    handles = [Patch(facecolor=c, edgecolor="black", label=lab) for _, lab, c in SERIES]
     ax.legend(
         handles=handles,
         loc="center left",
         bbox_to_anchor=(1.01, 0.5),
-        fontsize=9.0,
+        fontsize=10.5,
         frameon=False,
         handlelength=1.6,
         handletextpad=0.6,
@@ -168,17 +132,16 @@ def main() -> None:
     )
 
     ax.set_xticks(x)
-    ax.set_xticklabels([lab for _, lab in DATASETS], fontsize=10.0)
-    ax.set_ylabel("CER (%)", fontsize=10.5)
+    ax.set_xticklabels([lab for _, lab in DATASETS], fontsize=11.5)
+    ax.set_ylabel("CER (%)", fontsize=12.0)
     ax.set_ylim(0, ymax)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
-    ax.tick_params(axis="y", labelsize=9.0)
+    ax.tick_params(axis="y", labelsize=10.5)
     ax.grid(axis="y", alpha=0.3, linewidth=0.6)
     ax.set_axisbelow(True)
 
-    # Reserve right margin for the external legend.
-    fig.tight_layout(rect=(0.0, 0.0, 0.86, 1.0))
+    fig.tight_layout(rect=(0.0, 0.0, 0.84, 1.0))
     OUT_PDF.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(OUT_PDF, format="pdf", bbox_inches="tight")
     print(f"saved: {OUT_PDF}")
