@@ -73,21 +73,49 @@ def cell_path(dataset_key: str, p: float) -> Path:
     )
 
 
-def main() -> None:
-    fig, axes = plt.subplots(2, 2, figsize=(9.5, 6.0), sharex=False)
-    legend_handles = None
-
-    for ax, (dataset_key, label) in zip(axes.flat, PANELS):
-        cers, wers = [], []
-        for p in P_VALUES:
-            cer, wer = read_5fold(cell_path(dataset_key, p))
+def gather(dataset_key: str) -> tuple[list[float], list[float], list[float]]:
+    """Return (p_values, cers, wers) for the points that have 5-fold data."""
+    ps, cers, wers = [], [], []
+    for p in P_VALUES:
+        cer, wer = read_5fold(cell_path(dataset_key, p))
+        if cer is not None and wer is not None:
+            ps.append(p)
             cers.append(cer)
             wers.append(wer)
+    return ps, cers, wers
 
+
+# Grid layout chosen by how many datasets actually have data present. This lets
+# a public reproducer without the private subsets get a clean OnHW-only figure
+# instead of empty private panels; the full four-dataset run yields the 2x2.
+_LAYOUT = {1: (1, 1), 2: (1, 2), 3: (1, 3), 4: (2, 2)}
+_FIGSIZE = {(1, 1): (5.0, 3.2), (1, 2): (9.5, 3.2), (1, 3): (11.5, 3.2), (2, 2): (9.5, 6.0)}
+
+
+def main() -> None:
+    panels = []
+    for dataset_key, label in PANELS:
+        ps, cers, wers = gather(dataset_key)
+        if len(ps) >= 2:
+            panels.append((label, ps, cers, wers))
+        else:
+            print(f"skip {label}: only {len(ps)} sweep point(s) found under {RESULTS}")
+
+    if not panels:
+        print(f"no datasets with >=2 sweep points found under {RESULTS}; nothing to plot")
+        return
+
+    n = len(panels)
+    nrows, ncols = _LAYOUT.get(n, (2, 2))
+    fig, axes = plt.subplots(nrows, ncols, figsize=_FIGSIZE[(nrows, ncols)], squeeze=False)
+    axs = list(axes.flat)
+    legend_handles = None
+
+    for ax, (label, ps, cers, wers) in zip(axs, panels):
         cer_color = "#1f77b4"  # blue
         wer_color = "#ff7f0e"  # orange
 
-        l1 = ax.plot(P_VALUES, cers, marker="o", color=cer_color, linewidth=2, label="CER")
+        l1 = ax.plot(ps, cers, marker="o", color=cer_color, linewidth=2, label="CER")
         ax.set_ylabel("CER (%)", color=cer_color)
         ax.tick_params(axis="y", labelcolor=cer_color)
         ax.set_xlabel(r"$p_{\mathrm{ic}}$")
@@ -96,12 +124,16 @@ def main() -> None:
         ax.grid(True, alpha=0.3)
 
         ax2 = ax.twinx()
-        l2 = ax2.plot(P_VALUES, wers, marker="s", color=wer_color, linewidth=2, linestyle="--", label="WER")
+        l2 = ax2.plot(ps, wers, marker="s", color=wer_color, linewidth=2, linestyle="--", label="WER")
         ax2.set_ylabel("WER (%)", color=wer_color)
         ax2.tick_params(axis="y", labelcolor=wer_color)
 
         if legend_handles is None:
             legend_handles = l1 + l2
+
+    # Hide any unused axes (e.g. 3 datasets in a 2x2 fallback).
+    for ax in axs[n:]:
+        ax.set_visible(False)
 
     fig.legend(
         legend_handles,
@@ -112,10 +144,10 @@ def main() -> None:
         frameon=False,
         fontsize=10,
     )
-    fig.tight_layout(rect=[0, 0.03, 1, 1])
+    fig.tight_layout(rect=[0, 0.04, 1, 1])
     OUT_PDF.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(OUT_PDF, bbox_inches="tight")
-    print(f"saved: {OUT_PDF}")
+    print(f"saved: {OUT_PDF} ({n} panel{'s' if n != 1 else ''})")
 
 
 if __name__ == "__main__":
