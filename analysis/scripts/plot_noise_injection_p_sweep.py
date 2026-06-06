@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
-"""Generate corruption_p_sweep.pdf for paper 2.
+"""Generate corruption_p_sweep.pdf for the paper.
 
 Per-dataset panel: CER and WER vs noise-injection rate p_ic, 5-fold mean.
 CER on left axis (blue), WER on right axis (orange). Dotted vertical line
-marks the recommended default p_ic=0.15. Baseline (no noise injection) is
+marks the recommended default p_ic=0.15. The no-noise-injection baseline is
 the left-most x=0.00 point.
 
-Three panels (left to right): OnHW-WI (small-vocabulary, writer-independent),
-OnHW-WD (small-vocabulary, writer-dependent), and long-context private
-sentences.
+Four panels (2x2): OnHW-WI (small-vocabulary, writer-independent), OnHW-WD
+(small-vocabulary, writer-dependent), private words (large-vocabulary,
+short), and private sentences (large-vocabulary, long). Export ``REPO``
+first (``export REPO=$(pwd)``) so the result paths resolve.
 
 Run from anywhere:
     python plot_noise_injection_p_sweep.py
@@ -17,6 +18,7 @@ from __future__ import annotations
 
 import glob
 import json
+import os
 import statistics
 from pathlib import Path
 
@@ -25,15 +27,14 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-RESULTS = Path("${REPO}/results/hwr2")
-OUT_PDF = Path(
-    "${REPO}/publications/paper2_lncs_overleaf/"
-    "figures/corruption_p_sweep.pdf"
-)
+REPO = Path(os.environ.get("REPO", Path(__file__).resolve().parents[2]))
+RESULTS = REPO / "results" / "hwr2"
+OUT_PDF = REPO / "publications" / "paper2_lncs_overleaf" / "figures" / "corruption_p_sweep.pdf"
 
 PANELS = [
     ("onhw_wi_word_rh", "OnHW-Words500 (WI)"),
     ("onhw_wd_word_rh", "OnHW-Words500 (WD)"),
+    ("wi_word_hw6_meta", "Private (words)"),
     ("wi_sent_hw6_meta", "Private (sentences)"),
 ]
 
@@ -73,10 +74,10 @@ def cell_path(dataset_key: str, p: float) -> Path:
 
 
 def main() -> None:
-    fig, axes = plt.subplots(1, 3, figsize=(11.5, 3.2), sharex=False)
+    fig, axes = plt.subplots(2, 2, figsize=(9.5, 6.0), sharex=False)
     legend_handles = None
 
-    for ax, (dataset_key, label) in zip(axes, PANELS):
+    for ax, (dataset_key, label) in zip(axes.flat, PANELS):
         cers, wers = [], []
         for p in P_VALUES:
             cer, wer = read_5fold(cell_path(dataset_key, p))
@@ -107,11 +108,11 @@ def main() -> None:
         ["CER (left axis)", "WER (right axis)"],
         loc="lower center",
         ncol=2,
-        bbox_to_anchor=(0.5, -0.04),
+        bbox_to_anchor=(0.5, -0.02),
         frameon=False,
         fontsize=10,
     )
-    fig.tight_layout(rect=[0, 0.04, 1, 1])
+    fig.tight_layout(rect=[0, 0.03, 1, 1])
     OUT_PDF.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(OUT_PDF, bbox_inches="tight")
     print(f"saved: {OUT_PDF}")
