@@ -176,8 +176,11 @@ def run_tf_eval(model, loader, cfg, device, max_samples):
         len_y_cpu = len_y.cpu().tolist()
         y_cpu = y.cpu()
         for b in range(B):
-            preds.append(decode_ids(arg[b], chars, PAD_ID, BOS_ID, EOS_ID))
             L = int(len_y_cpu[b])
+            # Clamp to the valid target span (positions predicting y1..yL plus the
+            # EOS slot); decode_ids still stops at an earlier EOS. Prevents missed-EOS
+            # argmaxes at padded positions from leaking in as batch-dependent insertions.
+            preds.append(decode_ids(arg[b][:L + 1], chars, PAD_ID, BOS_ID, EOS_ID))
             lab_ids = y_cpu[b, :L].tolist() if y.dim() == 2 else []
             labels.append(decode_ids(lab_ids, chars, PAD_ID, BOS_ID, EOS_ID))
         n_seen += B
