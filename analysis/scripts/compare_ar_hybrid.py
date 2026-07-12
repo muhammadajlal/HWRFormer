@@ -80,7 +80,7 @@ def _require_exists(p: str | None, *, name: str) -> None:
 # ─────────────────────────── CLI ─────────────────────────── #
 
 def parse_args():
-    p = argparse.ArgumentParser(description="AR-only vs Hybrid encoder analysis")
+    p = argparse.ArgumentParser(description="HWRFormer vs hybrid HWRFormer encoder analysis")
     p.add_argument("--ar_ckpt", type=str, default=None, help="AR-only best checkpoint path")
     p.add_argument("--hyb_ckpt", type=str, default=None, help="Hybrid best checkpoint path")
     p.add_argument("--dataset", type=str, default=None, help="Dataset root (e.g., onhw_wi_word_rh)")
@@ -113,6 +113,14 @@ def parse_args():
         help="Task name in the unified CSV used for difficulty selection.",
     )
     p.add_argument(
+        "--difficulty_split",
+        type=str,
+        default=None,
+        help="Writer-split filter (e.g. 'wi' or 'wd'). Required when the CSV mixes "
+             "splits: without it WI and WD rows share sample_index values and the "
+             "difficulty distribution and label map are computed over the mixed pool.",
+    )
+    p.add_argument(
         "--difficulty_sep",
         type=str,
         default=";",
@@ -121,14 +129,17 @@ def parse_args():
     p.add_argument(
         "--difficulty_quantiles",
         type=str,
-        default="0.50,0.50,0.90,0.90,0.99,0.99",
-        help="Comma-separated quantiles for difficulty picks (default: '0.50,0.50,0.90,0.90,0.99,0.99').",
+        default="0.50,0.90,0.99",
+        help="Comma-separated quantiles for difficulty picks (default: '0.50,0.90,0.99', "
+             "one automatically selected example per quantile so the displayed set needs "
+             "no manual subsetting).",
     )
     p.add_argument(
         "--difficulty_n",
         type=int,
-        default=6,
-        help="Number of qualitative examples to pick in difficulty mode (default: 6).",
+        default=3,
+        help="Number of qualitative examples to pick in difficulty mode (default: 3, "
+             "one per quantile).",
     )
     p.add_argument(
         "--difficulty_no_easy",
@@ -331,8 +342,8 @@ def plot_tsne_side_by_side(
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(24, 10), dpi=150)
 
     for ax, emb_part, chars, title in [
-        (ax1, emb_ar, c_ar, "AR-only Encoder"),
-        (ax2, emb_hyb, c_hyb, "Hybrid CTC-AR Encoder"),
+        (ax1, emb_ar, c_ar, "HWRFormer Encoder"),
+        (ax2, emb_hyb, c_hyb, "hybrid HWRFormer Encoder"),
     ]:
         colors = [char_to_color[c] for c in chars]
         ax.scatter(emb_part[:, 0], emb_part[:, 1], c=colors, s=1, alpha=0.4, rasterized=True)
@@ -423,6 +434,7 @@ def _standardize_columns(df):
         "prediction": ["prediction", "pred"],
         "label": ["label", "gt", "groundtruth"],
         "levenshtein_distance": ["levenshtein_distance", "levenshteindistance", "lev", "distance"],
+        "split": ["split"],
     }
 
     rename = {}
@@ -448,6 +460,7 @@ def _load_difficulty_samples_from_csv(
     sep: str,
     task: str | None,
     fold: int,
+    split: str | None = None,
 ) -> tuple[list[str], list[str], list[int], dict[int, str], str]:
     import pandas as pd
 
@@ -474,6 +487,22 @@ def _load_difficulty_samples_from_csv(
         if df.empty:
             raise ValueError(f"No rows found for task '{task}' and fold {fold} in difficulty CSV")
 
+    # Writer-split filter. Without it, OnHW WI and WD rows carry the same
+    # per-split sample_index values, so the difficulty quantiles and the label
+    # map would be computed over the mixed WI+WD pool and sample_index would be
+    # ambiguous (the audited selection bug).
+    if split is not None:
+        if "split" not in df.columns:
+            raise ValueError(
+                f"--difficulty_split={split!r} requested but the CSV has no 'split' "
+                "column; rebuild it with _build_xs_aggregated_csv.py."
+            )
+        df = df[df["split"].astype(str) == str(split)].copy()
+        if df.empty:
+            raise ValueError(
+                f"No rows for task '{task}', fold {fold}, split '{split}' in difficulty CSV"
+            )
+
     df["prediction"] = df["prediction"].astype(str)
     df["label"] = df["label"].astype(str)
     df["sample_index"] = pd.to_numeric(df["sample_index"], errors="coerce")
@@ -482,6 +511,14 @@ def _load_difficulty_samples_from_csv(
     preds = df["prediction"].tolist()
     labels = df["label"].tolist()
     sample_ids = df["sample_index"].astype(int).tolist()
+    # Guard: sample_index must be unique within the selected (task, fold, split).
+    # A duplicate means the split filter was not applied (WI/WD mixed), which
+    # would make the label map ambiguous and can display the wrong sample.
+    if len(sample_ids) != len(set(sample_ids)):
+        raise ValueError(
+            f"Duplicate sample_index within task '{task}', fold {fold}, split '{split}': "
+            "pass --difficulty_split to filter to a single writer split (WI/WD mixed)."
+        )
     label_map = {int(s): str(l) for s, l in zip(sample_ids, labels)}
     return preds, labels, sample_ids, label_map, task
 
@@ -561,6 +598,7 @@ def _choose_difficulty_indices(
                 "idx": int(i),
                 "tag": tags.get(int(i), ""),
                 "norm_ld": float(d_norm[int(i)]),
+                "actual_percentile": float(100.0 * (d_norm <= d_norm[int(i)]).mean()),
                 "pred": str(preds[int(i)]),
                 "label": str(labels[int(i)]),
             }
@@ -730,8 +768,8 @@ def plot_cosine_similarity_comparison(
 
         im = None
         panels = [
-            (ax1, f_ar, c_ar, "AR-only"),
-            (ax2, f_hyb, c_hyb, "Hybrid"),
+            (ax1, f_ar, c_ar, "HWRFormer"),
+            (ax2, f_hyb, c_hyb, "hybrid HWRFormer"),
         ]
 
         for ax, f, chars, label in panels:
@@ -749,7 +787,9 @@ def plot_cosine_similarity_comparison(
 
             boundaries, seg_chars = _segments_from_char_labels(chars)
 
-            # Green boundary grid
+            # Uniformly assigned reference-character bin boundaries: the frame axis
+            # is divided into |label| equal parts (see encoder_features.py). These
+            # are NOT measured/CTC character alignments.
             for b in boundaries[1:-1]:
                 ax.axhline(b - 0.5, color="lime", linewidth=0.5, alpha=0.7)
                 ax.axvline(b - 0.5, color="lime", linewidth=0.5, alpha=0.7)
@@ -779,6 +819,13 @@ def plot_cosine_similarity_comparison(
             fontsize=13,
             y=1.12,
         )
+
+        # Footnote: the green lines are uniformly assigned reference-character
+        # bins, not a measured alignment (audit F3).
+        fig.text(0.5, -0.02,
+                 "Green lines: uniformly assigned reference-character bins "
+                 "(|label| equal frame divisions), not a measured alignment.",
+                 ha="center", va="top", fontsize=10, color="0.35")
 
         path = os.path.join(save_dir, f"cosine_sim_sample{sample_id:04d}_{word_ar[:10]}.pdf")
         fig.savefig(path, bbox_inches="tight")
@@ -1098,8 +1145,8 @@ def plot_attention_comparison(
         )
 
         for ax, M, tgt, name in [
-            (ax1, a_ar["attn"], tgt_ar, "AR-only"),
-            (ax2, a_hyb["attn"], tgt_hyb, "Hybrid"),
+            (ax1, a_ar["attn"], tgt_ar, "HWRFormer"),
+            (ax2, a_hyb["attn"], tgt_hyb, "hybrid HWRFormer"),
         ]:
             if M is None:
                 ax.set_axis_off()
@@ -1170,6 +1217,7 @@ def main():
             sep=str(args.difficulty_sep),
             task=args.difficulty_task,
             fold=int(args.fold),
+            split=args.difficulty_split,
         )
         quantiles = _parse_quantiles(args.difficulty_quantiles)
         qual_indices, qual_meta = _choose_difficulty_sample_ids(
@@ -1183,8 +1231,18 @@ def main():
         )
         qual_meta["task"] = task_name
         qual_meta["fold"] = int(args.fold)
+        qual_meta["split"] = args.difficulty_split
         qual_label_map = label_map
         logger.info("Qualitative indices (difficulty from CSV): {}", qual_indices)
+
+        # Versioned selection manifest for reproducibility: split, fold, and per
+        # sample the target quantile, actual empirical percentile, prediction,
+        # normalized error, and label.
+        os.makedirs(args.outdir, exist_ok=True)
+        _manifest_path = os.path.join(args.outdir, "difficulty_selection_manifest.json")
+        with open(_manifest_path, "w") as _fh:
+            json.dump(qual_meta, _fh, indent=2)
+        logger.info("Wrote selection manifest: {}", _manifest_path)
 
         # Provide a stable mapping for visualization annotations.
         # In the qualitative subset loader we preserve order = qual_indices.
@@ -1235,21 +1293,25 @@ def main():
             if len(qual_indices) == 0:
                 raise ValueError("Difficulty-picked qualitative indices are out of range for the dataset")
 
-            # Optional sanity-check: CSV labels should match dataset labels.
+            # Hard sanity-check: the CSV label at each selected sample_index MUST
+            # match the dataset label. Any mismatch means the selection is not
+            # aligned to the dataset (typically an unfiltered writer split), so we
+            # refuse to emit mislabelled figures rather than warn and proceed.
             if qual_label_map is not None:
-                mism = 0
-                for i in qual_indices:
-                    csv_label = qual_label_map.get(int(i))
-                    if csv_label is None:
-                        continue
-                    if str(dataset.annos[int(i)]["label"]) != str(csv_label):
-                        mism += 1
-                if mism > 0:
-                    logger.warning(
-                        "{} / {} qualitative indices have label mismatch between CSV and dataset. "
-                        "This suggests CSV ordering may not match dataset ordering.",
-                        mism,
-                        len(qual_indices),
+                mismatches = [
+                    (int(i), qual_label_map.get(int(i)), str(dataset.annos[int(i)]["label"]))
+                    for i in qual_indices
+                    if qual_label_map.get(int(i)) is not None
+                    and str(dataset.annos[int(i)]["label"]) != str(qual_label_map.get(int(i)))
+                ]
+                if mismatches:
+                    preview = "; ".join(f"idx {i}: CSV={c!r} != dataset={d!r}"
+                                        for i, c, d in mismatches[:6])
+                    raise ValueError(
+                        f"{len(mismatches)} / {len(qual_indices)} selected indices have a "
+                        f"label mismatch between CSV and dataset ({preview}). The difficulty "
+                        "selection is not aligned to the dataset -- pass --difficulty_split to "
+                        "match the writer split used to build the dataset."
                     )
 
         subset = Subset(dataset, qual_indices)
@@ -1271,11 +1333,11 @@ def main():
             feats_ar = extract_encoder_features(model_ar, loader, args.device, categories, args.max_samples)
 
             plot_tsne(feats_ar['features'], feats_ar['char_labels'],
-                      "AR-only Encoder Features (t-SNE)",
+                      "HWRFormer Encoder Features (t-SNE)",
                       os.path.join(args.outdir, "tsne_ar_only.pdf"),
                       perplexity=args.perplexity, seed=args.seed)
             plot_pca(feats_ar['features'], feats_ar['char_labels'],
-                     "AR-only Encoder Features (PCA)",
+                     "HWRFormer Encoder Features (PCA)",
                      os.path.join(args.outdir, "pca_ar_only.pdf"),
                      seed=args.seed)
             del model_ar
@@ -1297,11 +1359,11 @@ def main():
             feats_hyb = extract_encoder_features(model_hyb, loader, args.device, categories, args.max_samples)
 
             plot_tsne(feats_hyb['features'], feats_hyb['char_labels'],
-                      "Hybrid CTC-AR Encoder Features (t-SNE)",
+                      "hybrid HWRFormer Encoder Features (t-SNE)",
                       os.path.join(args.outdir, "tsne_hybrid.pdf"),
                       perplexity=args.perplexity, seed=args.seed)
             plot_pca(feats_hyb['features'], feats_hyb['char_labels'],
-                     "Hybrid CTC-AR Encoder Features (PCA)",
+                     "hybrid HWRFormer Encoder Features (PCA)",
                      os.path.join(args.outdir, "pca_hybrid.pdf"),
                      seed=args.seed)
 
@@ -1335,11 +1397,11 @@ def main():
             logger.info("Re-rendering PCAs with shared limits x=({:.1f},{:.1f}) y=({:.1f},{:.1f})",
                         *shared_xlim, *shared_ylim)
             plot_pca(feats_ar['features'], feats_ar['char_labels'],
-                     "AR-only Encoder Features (PCA)",
+                     "HWRFormer Encoder Features (PCA)",
                      os.path.join(args.outdir, "pca_ar_only.pdf"),
                      seed=args.seed, xlim=shared_xlim, ylim=shared_ylim)
             plot_pca(feats_hyb['features'], feats_hyb['char_labels'],
-                     "Hybrid CTC-AR Encoder Features (PCA)",
+                     "hybrid HWRFormer Encoder Features (PCA)",
                      os.path.join(args.outdir, "pca_hybrid.pdf"),
                      seed=args.seed, xlim=shared_xlim, ylim=shared_ylim)
 
@@ -1348,7 +1410,7 @@ def main():
         if feats_ar is not None:
             dd_ar = compute_dd_leak_moff_over_samples(feats_ar)
             logger.info(
-                "AR-only  DD={DD_mean:.4f}±{DD_std:.4f}  Leak={Leak_mean:.4f}±{Leak_std:.4f}  "
+                "HWRFormer  DD={DD_mean:.4f}±{DD_std:.4f}  Leak={Leak_mean:.4f}±{Leak_std:.4f}  "
                 "M_off={M_off_mean:.4f}±{M_off_std:.4f}  (n={n_samples})",
                 **dd_ar,
             )
