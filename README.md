@@ -1,8 +1,9 @@
-# HWRFormer — Anonymous Code Release
+# HWRFormer
 
-Anonymous code release accompanying the ECML PKDD 2026 workshop submission
-*"Mitigating Exposure Bias in IMU Handwriting Recognition."* It is released for
-review; identifying information has been removed.
+Official code release for
+*"Mitigating Exposure Bias in IMU Handwriting Recognition with Noise Injection
+and Hybrid CTC–AR Training"* (AALTD 2026, 11th Workshop on Advanced Analytics
+and Learning on Temporal Data at ECML PKDD, Naples).
 
 ## Introduction
 
@@ -216,4 +217,13 @@ MIT — see `LICENSE.txt`.
 
 ## Citation
 
-Citation details are omitted for anonymous review.
+```bibtex
+@inproceedings{ajlal2026hwrformer,
+  title     = {Mitigating Exposure Bias in {IMU} Handwriting Recognition with
+               Noise Injection and Hybrid {CTC}--{AR} Training},
+  author    = {Ajlal, Muhammad and Li, Jindong and Christlein, Vincent},
+  booktitle = {ECML PKDD Workshops: 11th Workshop on Advanced Analytics and
+               Learning on Temporal Data (AALTD)},
+  year      = {2026},
+}
+```
