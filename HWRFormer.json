@@ -24,9 +24,35 @@
    "cer_std": 6.17,
    "wer_mean": 15.33,
    "wer_std": 9.33,
-   "note": "Padding-mask-fixed, parameter-matched rerun (camera-ready)",
+   "note": "Padding-mask-fixed, parameter-matched rerun (camera-ready); all four datasets",
    "params_M": 4.62,
-   "macs_M": 429
+   "macs_M": 429,
+   "cross_dataset": {
+    "onhw_wd_word_rh": {
+     "cer_mean": 12.96,
+     "cer_std": 3.08,
+     "wer_mean": 41.88,
+     "wer_std": 6.84,
+     "n_folds": 5,
+     "path": "${REPO}/results/hwr2/Baseline-Transformer-XS-CTC-Matched-Masked/transformer_xs__onhw_wd_word_rh"
+    },
+    "wi_word_hw6_meta": {
+     "cer_mean": 9.53,
+     "cer_std": 0.56,
+     "wer_mean": 33.81,
+     "wer_std": 0.73,
+     "n_folds": 5,
+     "path": "${REPO}/results/hwr2/Baseline-Transformer-XS-CTC-Matched-Masked/transformer_xs__wi_word_hw6_meta"
+    },
+    "wi_sent_hw6_meta": {
+     "cer_mean": 7.41,
+     "cer_std": 0.73,
+     "wer_mean": 29.13,
+     "wer_std": 2.63,
+     "n_folds": 5,
+     "path": "${REPO}/results/hwr2/Baseline-Transformer-XS-CTC-Matched-Masked/transformer_xs__wi_sent_hw6_meta"
+    }
+   }
   },
   "HWRFormer_AR_no_gating": {
    "status": "ready",
