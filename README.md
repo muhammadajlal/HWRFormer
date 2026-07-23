@@ -223,8 +223,8 @@ MIT — see `LICENSE.txt`.
 @inproceedings{ajlal2026hwrformer,
   title     = {Mitigating Exposure Bias in {IMU} Handwriting Recognition with
                Noise Injection and Hybrid {CTC}--{AR} Training},
-  author    = {Ajlal, Muhammad and Li, Jindong and Zanca, Dario and
-               Christlein, Vincent and Eskofier, Bj{\"o}rn},
+  author    = {Ajlal, Muhammad and Li, Jindong and Christlein, Vincent and
+               Zanca, Dario and Eskofier, Bj{\"o}rn},
   booktitle = {ECML PKDD Workshops: 11th Workshop on Advanced Analytics and
                Learning on Temporal Data (AALTD)},
   year      = {2026},
