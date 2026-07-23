@@ -27,6 +27,7 @@ import sys
 
 import matplotlib
 matplotlib.use("Agg")
+matplotlib.rcParams["pdf.fonttype"] = 42  # TrueType, no Type3 (Springer)
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import numpy as np

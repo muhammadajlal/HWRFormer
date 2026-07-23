@@ -27,6 +27,7 @@ import numpy as np
 import pandas as pd
 import matplotlib
 matplotlib.use("Agg")
+matplotlib.rcParams["pdf.fonttype"] = 42  # TrueType, no Type3 (Springer)
 import matplotlib.pyplot as plt
 from scipy import stats as scipy_stats
 

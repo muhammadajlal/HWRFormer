@@ -43,6 +43,7 @@ from dataclasses import asdict, dataclass
 import matplotlib
 
 matplotlib.use("Agg")
+matplotlib.rcParams["pdf.fonttype"] = 42  # TrueType, no Type3 (Springer)
 import matplotlib.pyplot as plt
 import numpy as np
 from loguru import logger
