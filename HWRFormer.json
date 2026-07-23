@@ -10,21 +10,21 @@
  },
  "table1_onhw_migration": {
   "REWI_BiLSTM_CTC": {
-   "note": "Reference from REWI paper (Li 2025); not recomputed",
+   "note": "Re-measured with FlopCounterMode at len_max=6 (paper protocol)",
    "cer_mean": 7.3,
    "wer_mean": 15.16,
    "params_M": 4.64,
-   "macs_M": 695
+   "macs_M": 413
   },
   "HWRFormer_CTC": {
    "status": "ready",
    "n_folds": 5,
-   "path": "${REPO}/results/hwr2/Baseline-Transformer-XS-CTC-Matched-Masked/transformer_xs__onhw_wi_word_rh",
+   "path": "${REPO}/results/hwr2/Baseline-Transformer-CTC-Matched/transformer__onhw_wi_word_rh",
    "cer_mean": 7.16,
    "cer_std": 6.17,
    "wer_mean": 15.33,
    "wer_std": 9.33,
-   "note": "Padding-mask-fixed, parameter-matched rerun (camera-ready); all four datasets",
+   "note": "Padding-mask-fixed, parameter-matched CNN-Transformer-CTC (camera-ready); all four datasets",
    "params_M": 4.62,
    "macs_M": 429,
    "cross_dataset": {
@@ -34,7 +34,7 @@
      "wer_mean": 41.88,
      "wer_std": 6.84,
      "n_folds": 5,
-     "path": "${REPO}/results/hwr2/Baseline-Transformer-XS-CTC-Matched-Masked/transformer_xs__onhw_wd_word_rh"
+     "path": "${REPO}/results/hwr2/Baseline-Transformer-CTC-Matched/transformer__onhw_wd_word_rh"
     },
     "wi_word_hw6_meta": {
      "cer_mean": 9.53,
@@ -42,7 +42,7 @@
      "wer_mean": 33.81,
      "wer_std": 0.73,
      "n_folds": 5,
-     "path": "${REPO}/results/hwr2/Baseline-Transformer-XS-CTC-Matched-Masked/transformer_xs__wi_word_hw6_meta"
+     "path": "${REPO}/results/hwr2/Baseline-Transformer-CTC-Matched/transformer__wi_word_hw6_meta"
     },
     "wi_sent_hw6_meta": {
      "cer_mean": 7.41,
@@ -50,7 +50,7 @@
      "wer_mean": 29.13,
      "wer_std": 2.63,
      "n_folds": 5,
-     "path": "${REPO}/results/hwr2/Baseline-Transformer-XS-CTC-Matched-Masked/transformer_xs__wi_sent_hw6_meta"
+     "path": "${REPO}/results/hwr2/Baseline-Transformer-CTC-Matched/transformer__wi_sent_hw6_meta"
     }
    }
   },

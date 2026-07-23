@@ -16,11 +16,12 @@ them against the recurrent CNN-BiLSTM-CTC baseline.
 
 ![HWRFormer architecture](figures/architecture.png)
 
-*HWRFormer architecture and hybrid training. The solid horizontal path is used at
-inference: a shared 1D CNN encoder feeds an AR Transformer decoder with SDPA
-output gating. During hybrid training, an auxiliary CTC head on the same encoder
-adds a training-only loss summed with the AR loss; the dashed connector denotes
-the optional weight-tying ablation.*
+*HWRFormer architecture and hybrid training. At inference, the shared 1D CNN
+encoder feeds the AR Transformer decoder, which consumes its own previous
+predictions (dashed feedback loop); SDPA output gating is applied to the
+attention outputs within each decoder layer, shown schematically at the decoder
+output. During hybrid training, an auxiliary CTC head on the same encoder
+(dashed, training only) adds an alignment loss summed with the AR loss.*
 
 ## Results
 
@@ -32,7 +33,8 @@ MACs are reported at greedy AR decoding `len_max = 6`.
 
 | Model | Obj. | Gating | WI CER | WI WER | WD CER | WD WER | #Params | MACs |
 |---|---|---|---|---|---|---|---|---|
-| REWI (CNN-BiLSTM) | CTC | — | 7.30 | 15.16 | **14.81** | 44.77 | 4.64M | **413M** |
+| REWI (CNN-BiLSTM) | CTC | — | 7.30 | 15.16 | 14.81 | 44.77 | 4.64M | **413M** |
+| CNN-Transformer-CTC | CTC | — | 7.16 | 15.33 | **12.96** | 41.88 | 4.62M | 429M |
 | HWRFormer | AR | — | 7.10 | **10.39** | 16.47 | 32.07 | 4.57M | 653M |
 | HWRFormer | AR | elementwise | **6.94** | 10.50 | 16.31 | 31.87 | 4.64M | 669M |
 | HWRFormer | AR | headwise | 6.99 | 10.47 | 15.70 | **31.08** | 4.57M | 667M |
@@ -125,7 +127,7 @@ epochs), and batch size 64. Each fold writes to `<dir_work>/<fold>/`.
 |---|---|
 | `configs/train.yaml` | HWRFormer (AR + elementwise SDPA gating) — the headline model |
 | `configs/others/train_rewi_ctc.yaml` | CNN-BiLSTM-CTC baseline (REWI) |
-| `configs/others/train_transformer_ctc.yaml` | Parameter-matched Transformer-CTC |
+| `configs/others/train_transformer_ctc.yaml` | Parameter-matched CNN-Transformer-CTC |
 | `configs/others/train_noise_injection.yaml` | AR + noise injection |
 | `configs/others/train_hybrid.yaml` | Hybrid CTC–AR |
 
@@ -142,7 +144,7 @@ writer-dependent split.
 | AR baseline (elementwise) | `train.yaml` | *(defaults)* | `Baseline-AR-blconv_b/ar_transformer__onhw_wi_word_rh` |
 | AR, no gating | `train.yaml` | `use_gated_attention: false` | `Baseline-AR-Ungated/ar_transformer__onhw_wi_word_rh` |
 | AR, headwise gating | `train.yaml` | `gating_type: headwise` | `Baseline-AR-HeadwiseGating/ar_transformer__onhw_wi_word_rh` |
-| Transformer-CTC | `others/train_transformer_ctc.yaml` | *(as given)* | `Baseline-Transformer-CTC-Matched/transformer__onhw_wi_word_rh` |
+| CNN-Transformer-CTC | `others/train_transformer_ctc.yaml` | *(as given)* | `Baseline-Transformer-CTC-Matched/transformer__onhw_wi_word_rh` |
 | CNN-BiLSTM-CTC (REWI) | `others/train_rewi_ctc.yaml` | *(as given)* | `blconv_bilstm_wide_no_tokenizer/bilstm_wide__onhw_wi_word_rh` |
 | Noise-injection mode | `others/train_noise_injection.yaml` | `noise_injection.mode:` `uniform` \| `bigram_left` \| `bigram_right` \| `self_confusion` \| `adjacent_swap` | `Baseline-AR-NoiseInjection-<mode>/ar_transformer__onhw_wi_word_rh` |
 | Noise-injection rate sweep | `others/train_noise_injection.yaml` | `noise_injection.p_replace:` `0.05` \| `0.10` \| `0.15` \| `0.20` \| `0.30` | `Baseline-AR-NoiseInjection-Sweep-blconv_b/ar_transformer__onhw_wi_word_rh__p0p<NN>` |
@@ -197,7 +199,7 @@ evaluate.py             # 5-fold aggregation + params/MACs
 eval_tf_gap.py          # direct exposure-bias probe (w/ TF vs. w/o TF, Table 3)
 onhw.ipynb              # OnHW -> MSCOCO-like dataset conversion
 hwrformer/              # core library
-  model/                #   1D CNN encoder, AR Transformer decoder, Transformer-CTC,
+  model/                #   1D CNN encoder, AR Transformer decoder, CNN-Transformer-CTC,
                         #   hybrid dual-head, SDPA gating
   dataset/              #   IMU loaders, augmentations, collation
   training/             #   train/eval loops (CTC, AR, hybrid, noise injection)
