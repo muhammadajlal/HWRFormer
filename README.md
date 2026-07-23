@@ -60,12 +60,12 @@ HWRFormer on that split — higher means more of the exposure-bias gap removed.
 ✓ marks the active intervention; the first row is plain HWRFormer (AR). Largest
 reduction per split in **bold**.
 
-| Noise | Hybrid | WD w/ TF | WD w/o TF | WD Gap red. | WI w/ TF | WI w/o TF | WI Gap red. |
+| Noise | Hybrid | WI w/ TF | WI w/o TF | WI Gap red. | WD w/ TF | WD w/o TF | WD Gap red. |
 |:-:|:-:|--:|--:|--:|--:|--:|--:|
-|   |   | 10.91 | 16.31 | 0.0% | 2.76 | 6.95 | 0.0% |
-| ✓ |   | 11.76 | 13.52 | 67.4% | 5.23 | 6.86 | 61.1% |
-|   | ✓ | 9.86 | 13.38 | 34.8% | 2.77 | 6.83 | 3.1% |
-| ✓ | ✓ | 10.33 | 11.48 | **78.7%** | 5.33 | 6.70 | **67.3%** |
+|   |   | 2.76 | 6.95 | 0.0% | 10.91 | 16.31 | 0.0% |
+| ✓ |   | 5.23 | 6.86 | 61.1% | 11.76 | 13.52 | 67.4% |
+|   | ✓ | 2.77 | 6.83 | 3.1% | 9.86 | 13.38 | 34.8% |
+| ✓ | ✓ | 5.33 | 6.70 | **67.3%** | 10.33 | 11.48 | **78.7%** |
 
 Noise injection removes most of the exposure-bias gap on both public splits
 (61–67 % WI, 67–79 % WD), while hybrid CTC–AR alone barely changes it

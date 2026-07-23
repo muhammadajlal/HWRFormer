@@ -1,512 +1,523 @@
 {
  "_meta": {
-  "results_root": "${REPO}/results/hwr2",
-  "schema": "result cells keyed by [section][row], status=ready|pending|missing",
-  "summary_cell_counts": {
-   "ready": 72,
-   "pending": 0,
-   "missing": 0
-  }
+  "schema": "5-fold mean (std) in percent; sections map 1:1 to the camera-ready paper's tables and figures",
+  "paper": "Mitigating Exposure Bias in IMU Handwriting Recognition with Noise Injection and Hybrid CTC-AR Training (AALTD 2026 @ ECML PKDD)",
+  "generated": "2026-07-23 (camera-ready sync; every table value verified against results.json aggregates)",
+  "reproduce": "dir_work groups below use the release config conventions; see README 'Reproducing paper experiments'"
  },
- "table1_onhw_migration": {
-  "REWI_BiLSTM_CTC": {
-   "note": "Re-measured with FlopCounterMode at len_max=6 (paper protocol)",
-   "cer_mean": 7.3,
-   "wer_mean": 15.16,
+ "table1_migration": {
+  "REWI_CNN_BiLSTM_CTC": {
+   "onhw_wi_word_rh": {
+    "cer_mean": 7.3,
+    "cer_std": 6.85,
+    "wer_mean": 15.16,
+    "wer_std": 10.05
+   },
+   "onhw_wd_word_rh": {
+    "cer_mean": 14.81,
+    "cer_std": 3.84,
+    "wer_mean": 44.77,
+    "wer_std": 7.84
+   },
+   "wi_word_hw6_meta": {
+    "cer_mean": 9.39,
+    "cer_std": 0.59,
+    "wer_mean": 31.82,
+    "wer_std": 0.69
+   },
+   "wi_sent_hw6_meta": {
+    "cer_mean": 6.55,
+    "cer_std": 0.71,
+    "wer_mean": 23.52,
+    "wer_std": 2.27
+   },
    "params_M": 4.64,
-   "macs_M": 413
+   "macs_M": 413,
+   "dir_work": "blconv_bilstm_wide_no_tokenizer/bilstm_wide__<dataset>"
   },
-  "HWRFormer_CTC": {
-   "status": "ready",
-   "n_folds": 5,
-   "path": "${REPO}/results/hwr2/Baseline-Transformer-CTC-Matched/transformer__onhw_wi_word_rh",
-   "cer_mean": 7.16,
-   "cer_std": 6.17,
-   "wer_mean": 15.33,
-   "wer_std": 9.33,
-   "note": "Padding-mask-fixed, parameter-matched CNN-Transformer-CTC (camera-ready); all four datasets",
+  "CNN_Transformer_CTC": {
+   "onhw_wi_word_rh": {
+    "cer_mean": 7.16,
+    "cer_std": 6.17,
+    "wer_mean": 15.33,
+    "wer_std": 9.33
+   },
+   "onhw_wd_word_rh": {
+    "cer_mean": 12.96,
+    "cer_std": 3.08,
+    "wer_mean": 41.88,
+    "wer_std": 6.84
+   },
+   "wi_word_hw6_meta": {
+    "cer_mean": 9.53,
+    "cer_std": 0.56,
+    "wer_mean": 33.81,
+    "wer_std": 0.73
+   },
+   "wi_sent_hw6_meta": {
+    "cer_mean": 7.41,
+    "cer_std": 0.73,
+    "wer_mean": 29.13,
+    "wer_std": 2.63
+   },
    "params_M": 4.62,
    "macs_M": 429,
-   "cross_dataset": {
-    "onhw_wd_word_rh": {
-     "cer_mean": 12.96,
-     "cer_std": 3.08,
-     "wer_mean": 41.88,
-     "wer_std": 6.84,
-     "n_folds": 5,
-     "path": "${REPO}/results/hwr2/Baseline-Transformer-CTC-Matched/transformer__onhw_wd_word_rh"
-    },
-    "wi_word_hw6_meta": {
-     "cer_mean": 9.53,
-     "cer_std": 0.56,
-     "wer_mean": 33.81,
-     "wer_std": 0.73,
-     "n_folds": 5,
-     "path": "${REPO}/results/hwr2/Baseline-Transformer-CTC-Matched/transformer__wi_word_hw6_meta"
-    },
-    "wi_sent_hw6_meta": {
-     "cer_mean": 7.41,
-     "cer_std": 0.73,
-     "wer_mean": 29.13,
-     "wer_std": 2.63,
-     "n_folds": 5,
-     "path": "${REPO}/results/hwr2/Baseline-Transformer-CTC-Matched/transformer__wi_sent_hw6_meta"
-    }
-   }
+   "note": "Padding-mask-fixed, parameter-matched rerun (camera-ready)",
+   "dir_work": "Baseline-Transformer-CTC-Matched/transformer__<dataset>"
   },
-  "HWRFormer_AR_no_gating": {
-   "status": "ready",
-   "n_folds": 5,
-   "path": "${REPO}/results/hwr2/Baseline-AR-Ungated/ar_transformer__onhw_wi_word_rh",
-   "cer_mean": 7.1,
-   "cer_std": 7.15,
-   "wer_mean": 10.39,
-   "wer_std": 8.09
+  "HWRFormer_AR_plain_AED": {
+   "onhw_wi_word_rh": {
+    "cer_mean": 7.1,
+    "cer_std": 7.15,
+    "wer_mean": 10.39,
+    "wer_std": 8.08
+   },
+   "onhw_wd_word_rh": {
+    "cer_mean": 16.47,
+    "cer_std": 5.73,
+    "wer_mean": 32.07,
+    "wer_std": 9.21
+   },
+   "wi_word_hw6_meta": {
+    "cer_mean": 10.59,
+    "cer_std": 0.77,
+    "wer_mean": 21.39,
+    "wer_std": 1.23
+   },
+   "wi_sent_hw6_meta": {
+    "cer_mean": 10.37,
+    "cer_std": 1.08,
+    "wer_mean": 16.73,
+    "wer_std": 1.57
+   },
+   "params_M": 4.57,
+   "macs_M": 653,
+   "dir_work": "Baseline-AR-Ungated/ar_transformer__<dataset>"
   },
   "HWRFormer_AR_elementwise": {
-   "status": "ready",
-   "n_folds": 5,
-   "path": "${REPO}/results/hwr2/Baseline-AR-blconv_b/ar_transformer__onhw_wi_word_rh",
-   "cer_mean": 6.94,
-   "cer_std": 7.1,
-   "wer_mean": 10.5,
-   "wer_std": 8.26
-  },
-  "HWRFormer_AR_headwise": {
-   "status": "ready",
-   "n_folds": 5,
-   "path": "${REPO}/results/hwr2/Baseline-AR-HeadwiseGating/ar_transformer__onhw_wi_word_rh",
-   "cer_mean": 6.99,
-   "cer_std": 7.19,
-   "wer_mean": 10.47,
-   "wer_std": 8.42
-  }
- },
- "table2_private": {
-  "HWRFormer_AR_elementwise": {
-   "private_words": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-blconv_b/ar_transformer__wi_word_hw6_meta",
-    "cer_mean": 9.96,
-    "cer_std": 0.44,
-    "wer_mean": 19.04,
-    "wer_std": 0.61
-   },
-   "private_sent": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-blconv_b/ar_transformer__wi_sent_hw6_meta",
-    "cer_mean": 9.28,
-    "cer_std": 1.5,
-    "wer_mean": 14.88,
-    "wer_std": 1.98
-   }
-  },
-  "HWRFormer_AR_headwise": {
-   "private_words": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-HeadwiseGating/ar_transformer__wi_word_hw6_meta",
-    "cer_mean": 9.63,
-    "cer_std": 0.71,
-    "wer_mean": 19.07,
-    "wer_std": 1.08
-   },
-   "private_sent": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-HeadwiseGating/ar_transformer__wi_sent_hw6_meta",
-    "cer_mean": 9.12,
-    "cer_std": 1.27,
-    "wer_mean": 14.96,
-    "wer_std": 1.64
-   }
-  },
-  "REWI_BiLSTM_CTC": {
-   "note": "Reference from REWI paper",
-   "private_words": {
-    "cer_mean": 9.39,
-    "cer_std": 0.53,
-    "wer_mean": 31.82,
-    "wer_std": 0.62
-   },
-   "private_sent": {
-    "cer_mean": 6.55,
-    "cer_std": 0.63,
-    "wer_mean": 23.52,
-    "wer_std": 2.03
-   }
-  }
- },
- "table3_hybrid": {
-  "AR_only": {
-   "status": "ready",
-   "n_folds": 5,
-   "path": "${REPO}/results/hwr2/Baseline-AR-blconv_b/ar_transformer__onhw_wi_word_rh",
-   "cer_mean": 6.94,
-   "cer_std": 7.1,
-   "wer_mean": 10.5,
-   "wer_std": 8.26
-  },
-  "hybrid_independent": {
-   "status": "ready",
-   "n_folds": 5,
-   "path": "${REPO}/results/hwr2/train_element_word_hybrid_01_onhw_wi/ar_transformer__onhw_wi_word_rh",
-   "cer_mean": 6.83,
-   "cer_std": 7.1,
-   "wer_mean": 10.17,
-   "wer_std": 8.2
-  },
-  "hybrid_weight_tied": {
-   "status": "ready",
-   "n_folds": 5,
-   "path": "${REPO}/results/hwr2/train_element_word_hybrid_01_onhw_wi_ctc_to_ar_outproj/ar_transformer__onhw_wi_word_rh",
-   "cer_mean": 6.87,
-   "cer_std": 7.17,
-   "wer_mean": 10.15,
-   "wer_std": 8.17
-  }
- },
- "table4_noise_injection_modes": {
-  "onhw_wi_word_rh": {
-   "__baseline__": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-blconv_b/ar_transformer__onhw_wi_word_rh",
+   "onhw_wi_word_rh": {
     "cer_mean": 6.94,
     "cer_std": 7.1,
     "wer_mean": 10.5,
     "wer_std": 8.26
    },
-   "uniform": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-uniform/ar_transformer__onhw_wi_word_rh",
-    "cer_mean": 6.86,
-    "cer_std": 6.66,
-    "wer_mean": 13.04,
-    "wer_std": 8.81
-   },
-   "bigramright": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-bigramright/ar_transformer__onhw_wi_word_rh",
-    "cer_mean": 7.89,
-    "cer_std": 6.88,
-    "wer_mean": 15.59,
-    "wer_std": 8.8
-   },
-   "bigramleft": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-bigramleft/ar_transformer__onhw_wi_word_rh",
-    "cer_mean": 6.82,
-    "cer_std": 6.69,
-    "wer_mean": 12.97,
-    "wer_std": 8.89
-   },
-   "selfconf": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-selfconf/ar_transformer__onhw_wi_word_rh",
-    "cer_mean": 6.95,
-    "cer_std": 6.87,
-    "wer_mean": 13.74,
-    "wer_std": 9.44
-   },
-   "adjacentswap": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-adjacentswap/ar_transformer__onhw_wi_word_rh",
-    "cer_mean": 7.35,
-    "cer_std": 7.15,
-    "wer_mean": 12.1,
-    "wer_std": 8.4
-   }
-  },
-  "onhw_wd_word_rh": {
-   "__baseline__": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-blconv_b/ar_transformer__onhw_wd_word_rh",
+   "onhw_wd_word_rh": {
     "cer_mean": 16.31,
     "cer_std": 6.2,
     "wer_mean": 31.87,
-    "wer_std": 9.35
+    "wer_std": 9.31
    },
-   "uniform": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-uniform/ar_transformer__onhw_wd_word_rh",
-    "cer_mean": 13.52,
-    "cer_std": 4.06,
-    "wer_mean": 35.98,
-    "wer_std": 6.21
-   },
-   "bigramright": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-bigramright/ar_transformer__onhw_wd_word_rh",
-    "cer_mean": 15.01,
-    "cer_std": 4.2,
-    "wer_mean": 39.63,
-    "wer_std": 5.14
-   },
-   "bigramleft": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-bigramleft/ar_transformer__onhw_wd_word_rh",
-    "cer_mean": 13.63,
-    "cer_std": 4.29,
-    "wer_mean": 35.58,
-    "wer_std": 6.86
-   },
-   "selfconf": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-selfconf/ar_transformer__onhw_wd_word_rh",
-    "cer_mean": 13.61,
-    "cer_std": 4.45,
-    "wer_mean": 36.49,
-    "wer_std": 6.8
-   },
-   "adjacentswap": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-adjacentswap/ar_transformer__onhw_wd_word_rh",
-    "cer_mean": 16.44,
-    "cer_std": 5.17,
-    "wer_mean": 35.88,
-    "wer_std": 7.46
-   }
-  },
-  "onhw_equations_wi_word_rh": {
-   "__baseline__": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-blconv_b/ar_transformer__onhw_equations_wi_word_rh",
-    "cer_mean": 9.69,
-    "cer_std": 3.3,
-    "wer_mean": 43.55,
-    "wer_std": 7.82
-   },
-   "uniform": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-uniform/ar_transformer__onhw_equations_wi_word_rh",
-    "cer_mean": 8.91,
-    "cer_std": 3.09,
-    "wer_mean": 42.96,
-    "wer_std": 7.85
-   },
-   "bigramright": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-bigramright/ar_transformer__onhw_equations_wi_word_rh",
-    "cer_mean": 9.25,
-    "cer_std": 3.01,
-    "wer_mean": 44.02,
-    "wer_std": 6.56
-   },
-   "bigramleft": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-bigramleft/ar_transformer__onhw_equations_wi_word_rh",
-    "cer_mean": 9.31,
-    "cer_std": 3.31,
-    "wer_mean": 44.47,
-    "wer_std": 7.35
-   },
-   "selfconf": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-selfconf/ar_transformer__onhw_equations_wi_word_rh",
-    "cer_mean": 8.99,
-    "cer_std": 3.25,
-    "wer_mean": 42.82,
-    "wer_std": 8.68
-   },
-   "adjacentswap": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-adjacentswap/ar_transformer__onhw_equations_wi_word_rh",
-    "cer_mean": 10.94,
-    "cer_std": 3.27,
-    "wer_mean": 49.08,
-    "wer_std": 7.92
-   }
-  },
-  "onhw_equations_wd_word_rh": {
-   "__baseline__": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-blconv_b/ar_transformer__onhw_equations_wd_word_rh",
-    "cer_mean": 5.08,
-    "cer_std": 0.28,
-    "wer_mean": 23.93,
-    "wer_std": 0.83
-   },
-   "uniform": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-uniform/ar_transformer__onhw_equations_wd_word_rh",
-    "cer_mean": 4.05,
-    "cer_std": 0.5,
-    "wer_mean": 21.54,
-    "wer_std": 2.36
-   },
-   "bigramright": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-bigramright/ar_transformer__onhw_equations_wd_word_rh",
-    "cer_mean": 4.2,
-    "cer_std": 0.59,
-    "wer_mean": 22.62,
-    "wer_std": 2.73
-   },
-   "bigramleft": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-bigramleft/ar_transformer__onhw_equations_wd_word_rh",
-    "cer_mean": 4.07,
-    "cer_std": 0.55,
-    "wer_mean": 22.16,
-    "wer_std": 3.31
-   },
-   "selfconf": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-selfconf/ar_transformer__onhw_equations_wd_word_rh",
-    "cer_mean": 4.0,
-    "cer_std": 0.53,
-    "wer_mean": 21.52,
-    "wer_std": 2.13
-   },
-   "adjacentswap": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-adjacentswap/ar_transformer__onhw_equations_wd_word_rh",
-    "cer_mean": 5.97,
-    "cer_std": 0.61,
-    "wer_mean": 30.67,
-    "wer_std": 2.73
-   }
-  },
-  "wi_word_hw6_meta": {
-   "__baseline__": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-blconv_b/ar_transformer__wi_word_hw6_meta",
+   "wi_word_hw6_meta": {
     "cer_mean": 9.96,
     "cer_std": 0.44,
     "wer_mean": 19.04,
-    "wer_std": 0.61
+    "wer_std": 0.56
    },
-   "uniform": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-uniform/ar_transformer__wi_word_hw6_meta",
-    "cer_mean": 7.79,
-    "cer_std": 0.69,
-    "wer_mean": 23.39,
-    "wer_std": 1.39
-   },
-   "bigramright": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-bigramright/ar_transformer__wi_word_hw6_meta",
-    "cer_mean": 8.29,
-    "cer_std": 0.68,
-    "wer_mean": 24.91,
-    "wer_std": 1.38
-   },
-   "bigramleft": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-bigramleft/ar_transformer__wi_word_hw6_meta",
-    "cer_mean": 7.98,
-    "cer_std": 0.53,
-    "wer_mean": 24.24,
-    "wer_std": 1.16
-   },
-   "selfconf": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-selfconf/ar_transformer__wi_word_hw6_meta",
-    "cer_mean": 7.96,
-    "cer_std": 0.65,
-    "wer_mean": 24.5,
-    "wer_std": 1.2
-   },
-   "adjacentswap": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-adjacentswap/ar_transformer__wi_word_hw6_meta",
-    "cer_mean": 10.64,
-    "cer_std": 0.72,
-    "wer_mean": 24.61,
-    "wer_std": 1.15
-   }
-  },
-  "wi_sent_hw6_meta": {
-   "__baseline__": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-blconv_b/ar_transformer__wi_sent_hw6_meta",
+   "wi_sent_hw6_meta": {
     "cer_mean": 9.28,
     "cer_std": 1.5,
     "wer_mean": 14.88,
-    "wer_std": 1.98
+    "wer_std": 1.89
    },
-   "uniform": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-uniform/ar_transformer__wi_sent_hw6_meta",
+   "params_M": 4.64,
+   "macs_M": 669,
+   "dir_work": "Baseline-AR-blconv_b/ar_transformer__<dataset>"
+  },
+  "HWRFormer_AR_headwise": {
+   "onhw_wi_word_rh": {
+    "cer_mean": 6.99,
+    "cer_std": 7.19,
+    "wer_mean": 10.47,
+    "wer_std": 8.42
+   },
+   "onhw_wd_word_rh": {
+    "cer_mean": 15.7,
+    "cer_std": 5.91,
+    "wer_mean": 31.08,
+    "wer_std": 9.25
+   },
+   "wi_word_hw6_meta": {
+    "cer_mean": 9.63,
+    "cer_std": 0.71,
+    "wer_mean": 19.07,
+    "wer_std": 1.08
+   },
+   "wi_sent_hw6_meta": {
+    "cer_mean": 9.12,
+    "cer_std": 1.27,
+    "wer_mean": 14.96,
+    "wer_std": 1.47
+   },
+   "params_M": 4.57,
+   "macs_M": 667,
+   "dir_work": "Baseline-AR-HeadwiseGating/ar_transformer__<dataset>"
+  }
+ },
+ "table2_interventions": {
+  "_note": "HWRFormer = elementwise-gated AR; '+' columns add the training intervention",
+  "onhw_wi_word_rh": {
+   "REWI": {
+    "cer_mean": 7.3,
+    "cer_std": 6.85,
+    "wer_mean": 15.16,
+    "wer_std": 10.05
+   },
+   "HWRFormer": {
+    "cer_mean": 6.94,
+    "cer_std": 7.1,
+    "wer_mean": 10.5,
+    "wer_std": 8.26
+   },
+   "plus_noise": {
+    "cer_mean": 6.86,
+    "cer_std": 6.66,
+    "wer_mean": 13.04,
+    "wer_std": 8.82
+   },
+   "plus_hybrid": {
+    "cer_mean": 6.83,
+    "cer_std": 7.1,
+    "wer_mean": 10.17,
+    "wer_std": 8.2
+   },
+   "plus_hybrid_noise": {
+    "cer_mean": 6.7,
+    "cer_std": 6.64,
+    "wer_mean": 12.93,
+    "wer_std": 9.21
+   }
+  },
+  "onhw_wd_word_rh": {
+   "REWI": {
+    "cer_mean": 14.81,
+    "cer_std": 3.84,
+    "wer_mean": 44.77,
+    "wer_std": 7.84
+   },
+   "HWRFormer": {
+    "cer_mean": 16.31,
+    "cer_std": 6.2,
+    "wer_mean": 31.87,
+    "wer_std": 9.31
+   },
+   "plus_noise": {
+    "cer_mean": 13.52,
+    "cer_std": 4.06,
+    "wer_mean": 35.98,
+    "wer_std": 6.17
+   },
+   "plus_hybrid": {
+    "cer_mean": 13.39,
+    "cer_std": 5.7,
+    "wer_mean": 27.42,
+    "wer_std": 9.28
+   },
+   "plus_hybrid_noise": {
+    "cer_mean": 11.49,
+    "cer_std": 3.99,
+    "wer_mean": 31.72,
+    "wer_std": 6.42
+   }
+  },
+  "wi_word_hw6_meta": {
+   "REWI": {
+    "cer_mean": 9.39,
+    "cer_std": 0.59,
+    "wer_mean": 31.82,
+    "wer_std": 0.69
+   },
+   "HWRFormer": {
+    "cer_mean": 9.96,
+    "cer_std": 0.44,
+    "wer_mean": 19.04,
+    "wer_std": 0.56
+   },
+   "plus_noise": {
+    "cer_mean": 7.79,
+    "cer_std": 0.69,
+    "wer_mean": 23.39,
+    "wer_std": 1.33
+   },
+   "plus_hybrid": {
+    "cer_mean": 9.37,
+    "cer_std": 0.72,
+    "wer_mean": 19.65,
+    "wer_std": 1.02
+   },
+   "plus_hybrid_noise": {
+    "cer_mean": 7.85,
+    "cer_std": 0.6,
+    "wer_mean": 24.88,
+    "wer_std": 1.31
+   }
+  },
+  "wi_sent_hw6_meta": {
+   "REWI": {
+    "cer_mean": 6.55,
+    "cer_std": 0.71,
+    "wer_mean": 23.52,
+    "wer_std": 2.27
+   },
+   "HWRFormer": {
+    "cer_mean": 9.28,
+    "cer_std": 1.5,
+    "wer_mean": 14.88,
+    "wer_std": 1.89
+   },
+   "plus_noise": {
     "cer_mean": 7.09,
     "cer_std": 0.78,
     "wer_mean": 18.83,
-    "wer_std": 1.63
+    "wer_std": 1.6
    },
-   "bigramright": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-bigramright/ar_transformer__wi_sent_hw6_meta",
-    "cer_mean": 7.51,
-    "cer_std": 0.82,
-    "wer_mean": 19.96,
-    "wer_std": 1.75
+   "plus_hybrid": {
+    "cer_mean": 9.38,
+    "cer_std": 1.33,
+    "wer_mean": 16.98,
+    "wer_std": 2.0
    },
-   "bigramleft": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-bigramleft/ar_transformer__wi_sent_hw6_meta",
-    "cer_mean": 7.18,
-    "cer_std": 0.82,
-    "wer_mean": 19.61,
-    "wer_std": 2.16
-   },
-   "selfconf": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-selfconf/ar_transformer__wi_sent_hw6_meta",
-    "cer_mean": 7.26,
-    "cer_std": 0.79,
-    "wer_mean": 19.86,
-    "wer_std": 1.71
-   },
-   "adjacentswap": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-adjacentswap/ar_transformer__wi_sent_hw6_meta",
-    "cer_mean": 9.79,
-    "cer_std": 1.06,
-    "wer_mean": 19.04,
-    "wer_std": 1.62
+   "plus_hybrid_noise": {
+    "cer_mean": 9.73,
+    "cer_std": 0.45,
+    "wer_mean": 27.52,
+    "wer_std": 1.15
    }
   }
  },
- "figure_lambda_sweep": {
+ "table3_tf_gap_probe": {
+  "_note": "Paired diagnostic evaluator on the same best-CER checkpoints; greedy = self-fed decoding, tf = teacher-forced argmax; gap_reduction_pct relative to the plain-AR gap on the same dataset",
+  "onhw_wi_word_rh": {
+   "AR_only": {
+    "greedy_cer": 6.95,
+    "tf_cer": 2.76,
+    "gap_reduction_pct": 0.0
+   },
+   "noise": {
+    "greedy_cer": 6.86,
+    "tf_cer": 5.23,
+    "gap_reduction_pct": 61.1
+   },
+   "hybrid": {
+    "greedy_cer": 6.83,
+    "tf_cer": 2.77,
+    "gap_reduction_pct": 3.1
+   },
+   "hybrid_noise": {
+    "greedy_cer": 6.7,
+    "tf_cer": 5.33,
+    "gap_reduction_pct": 67.3
+   }
+  },
+  "onhw_wd_word_rh": {
+   "AR_only": {
+    "greedy_cer": 16.31,
+    "tf_cer": 10.91,
+    "gap_reduction_pct": 0.0
+   },
+   "noise": {
+    "greedy_cer": 13.52,
+    "tf_cer": 11.76,
+    "gap_reduction_pct": 67.4
+   },
+   "hybrid": {
+    "greedy_cer": 13.38,
+    "tf_cer": 9.86,
+    "gap_reduction_pct": 34.8
+   },
+   "hybrid_noise": {
+    "greedy_cer": 11.48,
+    "tf_cer": 10.33,
+    "gap_reduction_pct": 78.7
+   }
+  },
+  "wi_word_hw6_meta": {
+   "AR_only": {
+    "greedy_cer": 9.96,
+    "tf_cer": 5.23,
+    "gap_reduction_pct": 0.0
+   },
+   "noise": {
+    "greedy_cer": 7.8,
+    "tf_cer": 6.52,
+    "gap_reduction_pct": 72.9
+   },
+   "hybrid": {
+    "greedy_cer": 9.37,
+    "tf_cer": 5.13,
+    "gap_reduction_pct": 10.4
+   },
+   "hybrid_noise": {
+    "greedy_cer": 7.85,
+    "tf_cer": 6.64,
+    "gap_reduction_pct": 74.4
+   }
+  },
+  "wi_sent_hw6_meta": {
+   "AR_only": {
+    "greedy_cer": 9.28,
+    "tf_cer": 2.73,
+    "gap_reduction_pct": 0.0
+   },
+   "noise": {
+    "greedy_cer": 7.09,
+    "tf_cer": 4.62,
+    "gap_reduction_pct": 62.3
+   },
+   "hybrid": {
+    "greedy_cer": 9.38,
+    "tf_cer": 3.3,
+    "gap_reduction_pct": 7.2
+   },
+   "hybrid_noise": {
+    "greedy_cer": 9.73,
+    "tf_cer": 7.2,
+    "gap_reduction_pct": 61.4
+   }
+  }
+ },
+ "figure2_noise_modes": {
+  "_note": "5-fold mean CER (%) at p_ni=0.15, elementwise-gated HWRFormer (paper Fig. 2)",
+  "onhw_wi_word_rh": {
+   "baseline": 6.94,
+   "uniform": 6.86,
+   "bigramright": 7.89,
+   "bigramleft": 6.82,
+   "selfconf": 6.95,
+   "adjacentswap": 7.35
+  },
+  "onhw_wd_word_rh": {
+   "baseline": 16.31,
+   "uniform": 13.52,
+   "bigramright": 15.01,
+   "bigramleft": 13.63,
+   "selfconf": 13.61,
+   "adjacentswap": 16.44
+  },
+  "wi_word_hw6_meta": {
+   "baseline": 9.96,
+   "uniform": 7.79,
+   "bigramright": 8.29,
+   "bigramleft": 7.98,
+   "selfconf": 7.96,
+   "adjacentswap": 10.64
+  },
+  "wi_sent_hw6_meta": {
+   "baseline": 9.28,
+   "uniform": 7.09,
+   "bigramright": 7.51,
+   "bigramleft": 7.18,
+   "selfconf": 7.26,
+   "adjacentswap": 9.79
+  }
+ },
+ "figure3_noise_rate_sweep": {
+  "_note": "Uniform mode; 5-fold mean CER/WER (%) vs p_ni (paper Fig. 3)",
+  "onhw_wi_word_rh": {
+   "0.00": {
+    "cer_mean": 6.94,
+    "wer_mean": 10.5
+   },
+   "0.05": {
+    "cer_mean": 6.62,
+    "wer_mean": 11.08
+   },
+   "0.10": {
+    "cer_mean": 6.52,
+    "wer_mean": 11.78
+   },
+   "0.15": {
+    "cer_mean": 6.86,
+    "wer_mean": 13.04
+   },
+   "0.20": {
+    "cer_mean": 7.22,
+    "wer_mean": 14.62
+   },
+   "0.30": {
+    "cer_mean": 8.24,
+    "wer_mean": 17.99
+   }
+  },
+  "onhw_wd_word_rh": {
+   "0.00": {
+    "cer_mean": 16.31,
+    "wer_mean": 31.87
+   },
+   "0.05": {
+    "cer_mean": 12.56,
+    "wer_mean": 30.29
+   },
+   "0.10": {
+    "cer_mean": 13.12,
+    "wer_mean": 33.2
+   },
+   "0.15": {
+    "cer_mean": 13.52,
+    "wer_mean": 35.98
+   },
+   "0.20": {
+    "cer_mean": 14.18,
+    "wer_mean": 39.59
+   },
+   "0.30": {
+    "cer_mean": 15.46,
+    "wer_mean": 44.87
+   }
+  },
+  "wi_word_hw6_meta": {
+   "0.00": {
+    "cer_mean": 9.96,
+    "wer_mean": 19.04
+   },
+   "0.05": {
+    "cer_mean": 7.85,
+    "wer_mean": 21.2
+   },
+   "0.10": {
+    "cer_mean": 7.81,
+    "wer_mean": 22.71
+   },
+   "0.15": {
+    "cer_mean": 7.79,
+    "wer_mean": 23.39
+   },
+   "0.20": {
+    "cer_mean": 8.13,
+    "wer_mean": 24.98
+   },
+   "0.30": {
+    "cer_mean": 8.51,
+    "wer_mean": 26.98
+   }
+  },
+  "wi_sent_hw6_meta": {
+   "0.00": {
+    "cer_mean": 9.28,
+    "wer_mean": 14.88
+   },
+   "0.05": {
+    "cer_mean": 6.91,
+    "wer_mean": 15.47
+   },
+   "0.10": {
+    "cer_mean": 6.84,
+    "wer_mean": 16.95
+   },
+   "0.15": {
+    "cer_mean": 7.09,
+    "wer_mean": 18.83
+   },
+   "0.20": {
+    "cer_mean": 7.44,
+    "wer_mean": 20.37
+   },
+   "0.30": {
+    "cer_mean": 8.87,
+    "wer_mean": 25.42
+   }
+  }
+ },
+ "figure4_lambda_sweep": {
   "lambda_0.1": {
    "status": "ready",
    "n_folds": 5,
@@ -596,149 +607,6 @@
    "cer_std": 7.23,
    "wer_mean": 10.77,
    "wer_std": 8.25
-  }
- },
- "figure_pic_sweep": {
-  "onhw_wi_word_rh": {
-   "p_0.15": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-uniform/ar_transformer__onhw_wi_word_rh",
-    "cer_mean": 6.86,
-    "cer_std": 6.66,
-    "wer_mean": 13.04,
-    "wer_std": 8.81
-   },
-   "p_0.05": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-Sweep-blconv_b/ar_transformer__onhw_wi_word_rh__p0p05",
-    "cer_mean": 6.62,
-    "cer_std": 6.83,
-    "wer_mean": 11.08,
-    "wer_std": 8.55
-   },
-   "p_0.10": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-Sweep-blconv_b/ar_transformer__onhw_wi_word_rh__p0p10",
-    "cer_mean": 6.52,
-    "cer_std": 6.58,
-    "wer_mean": 11.78,
-    "wer_std": 8.74
-   },
-   "p_0.20": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-Sweep-blconv_b/ar_transformer__onhw_wi_word_rh__p0p20",
-    "cer_mean": 7.22,
-    "cer_std": 6.67,
-    "wer_mean": 14.62,
-    "wer_std": 8.89
-   },
-   "p_0.30": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-Sweep-blconv_b/ar_transformer__onhw_wi_word_rh__p0p30",
-    "cer_mean": 8.24,
-    "cer_std": 7.09,
-    "wer_mean": 17.99,
-    "wer_std": 9.57
-   }
-  },
-  "onhw_wd_word_rh": {
-   "p_0.15": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-uniform/ar_transformer__onhw_wd_word_rh",
-    "cer_mean": 13.52,
-    "cer_std": 4.06,
-    "wer_mean": 35.98,
-    "wer_std": 6.21
-   },
-   "p_0.05": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-Sweep-blconv_b/ar_transformer__onhw_wd_word_rh__p0p05",
-    "cer_mean": 12.56,
-    "cer_std": 4.5,
-    "wer_mean": 30.29,
-    "wer_std": 7.54
-   },
-   "p_0.10": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-Sweep-blconv_b/ar_transformer__onhw_wd_word_rh__p0p10",
-    "cer_mean": 13.12,
-    "cer_std": 5.01,
-    "wer_mean": 33.2,
-    "wer_std": 7.79
-   },
-   "p_0.20": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-Sweep-blconv_b/ar_transformer__onhw_wd_word_rh__p0p20",
-    "cer_mean": 14.18,
-    "cer_std": 4.14,
-    "wer_mean": 39.59,
-    "wer_std": 5.51
-   },
-   "p_0.30": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-Sweep-blconv_b/ar_transformer__onhw_wd_word_rh__p0p30",
-    "cer_mean": 15.46,
-    "cer_std": 3.67,
-    "wer_mean": 44.87,
-    "wer_std": 5.49
-   }
-  },
-  "wi_sent_hw6_meta": {
-   "p_0.15": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-uniform/ar_transformer__wi_sent_hw6_meta",
-    "cer_mean": 7.09,
-    "cer_std": 0.78,
-    "wer_mean": 18.83,
-    "wer_std": 1.63
-   },
-   "p_0.05": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-Sweep-blconv_b/ar_transformer__wi_sent_hw6_meta__p0p05",
-    "cer_mean": 6.91,
-    "cer_std": 0.87,
-    "wer_mean": 15.47,
-    "wer_std": 1.38
-   },
-   "p_0.10": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-Sweep-blconv_b/ar_transformer__wi_sent_hw6_meta__p0p10",
-    "cer_mean": 6.84,
-    "cer_std": 0.69,
-    "wer_mean": 16.95,
-    "wer_std": 1.42
-   },
-   "p_0.20": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-Sweep-blconv_b/ar_transformer__wi_sent_hw6_meta__p0p20",
-    "cer_mean": 7.44,
-    "cer_std": 0.75,
-    "wer_mean": 20.37,
-    "wer_std": 1.66
-   },
-   "p_0.30": {
-    "status": "ready",
-    "n_folds": 5,
-    "path": "${REPO}/results/hwr2/Baseline-AR-NoiseInjection-Sweep-blconv_b/ar_transformer__wi_sent_hw6_meta__p0p30",
-    "cer_mean": 8.87,
-    "cer_std": 0.92,
-    "wer_mean": 25.42,
-    "wer_std": 2.06
-   }
   }
  }
 }
