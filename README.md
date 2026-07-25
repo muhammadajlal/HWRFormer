@@ -55,14 +55,17 @@ sentence profiling uses 4,096 input timesteps):
 AR decoding halves WER on the private splits too, while REWI keeps the best
 CER there — the CER/WER trade-off discussed in the paper.
 
-**Exposure-bias interventions** (CER / WER), HWRFormer = elementwise-gated AR.
+**Exposure-bias interventions** (CER / WER). HWRFormer is the elementwise-gated
+AR variant from the migration tables; "+" rows add the labeled training
+intervention on top. **Bold** = best per dataset and metric.
 
-| Dataset | REWI | HWRFormer | + Noise inj. | + Hybrid | + Hybrid + Noise inj. |
-|---|---|---|---|---|---|
-| OnHW-words500 (WI) | 7.30 / 15.16 | 6.94 / 10.50 | 6.86 / 13.04 | 6.83 / **10.17** | **6.70** / 12.93 |
-| OnHW-words500 (WD) | 14.81 / 44.77 | 16.31 / 31.87 | 13.52 / 35.98 | 13.39 / **27.42** | **11.49** / 31.72 |
-| Private words (WI) | 9.39 / 31.82 | 9.96 / **19.04** | **7.79** / 23.39 | 9.37 / 19.65 | 7.85 / 24.88 |
-| Private sentences (WI) | **6.55** / 23.52 | 9.28 / **14.88** | 7.09 / 18.83 | 9.38 / 16.98 | 9.73 / 27.52 |
+| Model | OnHW (WI) | OnHW (WD) | Priv. (words) | Priv. (sent.) |
+|---|---|---|---|---|
+| REWI | 7.30 / 15.16 | 14.81 / 44.77 | 9.39 / 31.82 | **6.55** / 23.52 |
+| HWRFormer | 6.94 / 10.50 | 16.31 / 31.87 | 9.96 / **19.04** | 9.28 / **14.88** |
+| + Noise inj. | 6.86 / 13.04 | 13.52 / 35.98 | **7.79** / 23.39 | 7.09 / 18.83 |
+| + Hybrid | 6.83 / **10.17** | 13.39 / **27.42** | 9.37 / 19.65 | 9.38 / 16.98 |
+| + Hybrid + Noise inj. | **6.70** / 12.93 | **11.49** / 31.72 | 7.85 / 24.88 | 9.73 / 27.52 |
 
 OnHW WI fold difficulty varies strongly across writers (individual folds range
 from ~1 to ~15 % CER), so sub-percentage-point differences on WI are within
