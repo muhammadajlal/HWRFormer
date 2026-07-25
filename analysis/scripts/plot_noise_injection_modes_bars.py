@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate corruption_modes_bars.pdf for the paper.
+"""Generate the noise-injection mode bar chart (paper Fig. 2).
 
 Grouped bar chart: one cluster per dataset. Each cluster uses a fixed
 left-to-right order: baseline, uniform, bigram-right, bigram-left,
@@ -7,9 +7,10 @@ self-confusion, adjacent-swap. The fixed order keeps the mode comparison
 visually stable across datasets, and the no-noise-injection baseline is the
 leftmost (grey) bar in every cluster.
 
-Data source: results/hwr2/Baseline-AR-NoiseInjection-* and the no-noise
-Baseline-AR-blconv_b run, 5-fold mean CER. Export ``REPO`` first
-(``export REPO=$(pwd)``) so the result paths resolve.
+Data source: trained results under results/hwr2/ when present and complete
+(Baseline-AR-NoiseInjection-* plus the no-noise Baseline-AR-blconv_b run,
+5-fold mean CER); otherwise the pre-aggregated numbers in HWRFormer.json,
+so the paper figure can be regenerated without re-running training.
 
 Run from anywhere:
     python plot_noise_injection_modes_bars.py
@@ -30,7 +31,7 @@ from matplotlib.patches import Patch
 
 REPO = Path(os.environ.get("REPO", Path(__file__).resolve().parents[2]))
 RESULTS_ROOT = REPO / "results" / "hwr2"
-OUT_PDF = REPO / "publications" / "paper2_lncs_overleaf" / "figures" / "corruption_modes_bars.pdf"
+OUT_PDF = REPO / "figures" / "noise_injection_modes_bars.pdf"
 
 DATASETS: list[tuple[str, str]] = [
     ("onhw_wi_word_rh",  "OnHW-WI"),
@@ -82,17 +83,37 @@ def read_5fold_cer(model_dir: Path) -> float | None:
     return float(np.mean(cers))
 
 
-def main() -> None:
+def load_data() -> dict[str, dict[str, float | None]]:
+    """5-fold mean CER per dataset and mode: from results/ if complete,
+    otherwise from the pre-aggregated figure2 block in HWRFormer.json."""
     data: dict[str, dict[str, float | None]] = {}
+    if RESULTS_ROOT.exists():
+        complete = True
+        for ds_key, _ in DATASETS:
+            row: dict[str, float | None] = {}
+            row["__baseline__"] = read_5fold_cer(baseline_dir(ds_key))
+            for mode_key, _, _ in MODES:
+                row[mode_key] = read_5fold_cer(mode_dir(mode_key, ds_key))
+            data[ds_key] = row
+            if any(v is None for v in row.values()):
+                complete = False
+        if complete:
+            return data
+        print(f"results under {RESULTS_ROOT} incomplete; falling back to HWRFormer.json")
+    json_path = REPO / "HWRFormer.json"
+    block = json.load(open(json_path))["figure2_noise_modes"]
+    print(f"using pre-aggregated numbers from {json_path}")
     for ds_key, _ in DATASETS:
-        row: dict[str, float | None] = {}
-        row["__baseline__"] = read_5fold_cer(baseline_dir(ds_key))
+        entry = block[ds_key]
+        row = {"__baseline__": float(entry["baseline"])}
         for mode_key, _, _ in MODES:
-            row[mode_key] = read_5fold_cer(mode_dir(mode_key, ds_key))
+            row[mode_key] = float(entry[mode_key])
         data[ds_key] = row
-        missing = [m for m, v in row.items() if v is None]
-        if missing:
-            print(f"WARN: dataset {ds_key} missing modes: {missing}")
+    return data
+
+
+def main() -> None:
+    data = load_data()
 
     fig, ax = plt.subplots(figsize=(11.2, 3.5))
     group_w = 0.90

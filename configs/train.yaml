@@ -5,7 +5,7 @@
 # headline model: an autoregressive Transformer decoder on a 1D CNN encoder
 # with elementwise SDPA output gating. See the "Reproducing paper experiments"
 # table in the README for the knob overrides that produce every other result
-# (gating ablation, noise injection, hybrid CTC-AR, lambda / p_ic sweeps,
+# (gating ablation, noise injection, hybrid CTC-AR, lambda / p_ni sweeps,
 # writer-dependent split).
 #
 #   5-fold cross validation:  python train_cv.py -c configs/train.yaml

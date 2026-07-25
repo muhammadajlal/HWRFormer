@@ -235,13 +235,15 @@ to compute teacher-forced (w/ TF) vs.\ greedy decoding without teacher forcing
 the YAML, with per-condition CER/WER and the w/ TF → w/o TF gap. Sweeping
 across all folds and training conditions reproduces Table 3 of the paper.
 
-The paper's figures can be regenerated from the pre-aggregated numbers in
-`HWRFormer.json` without re-running training:
+The paper's figures can be regenerated without re-running training — the
+scripts use trained results under `results/hwr2/` when present and otherwise
+fall back to the pre-aggregated numbers in `HWRFormer.json`. Output PDFs land
+in `figures/`:
 
 ```bash
-python analysis/scripts/plot_noise_injection_modes_bars.py    # noise-injection mode bar chart
-python analysis/scripts/plot_noise_injection_p_sweep.py       # p_ic sweep curves
-python analysis/scripts/plot_lambda_sweep.py             # lambda_ctc sweep
+python analysis/scripts/plot_noise_injection_modes_bars.py    # Fig. 2: noise-injection mode bars
+python analysis/scripts/plot_noise_injection_p_sweep.py       # Fig. 3: p_ni rate-sweep curves
+python analysis/scripts/plot_lambda_sweep.py                  # Fig. 4: lambda_ctc sweep
 ```
 
 ## Repository layout

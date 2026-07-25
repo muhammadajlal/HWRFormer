@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
-"""Generate ctc_diagnostics_compact.pdf for paper 2.
+"""Generate the lambda_ctc sweep figure (paper Fig. 4).
 
 Two-panel figure: downstream AR CER (left) and WER (right) vs lambda_ctc,
-5-fold mean +/- across-fold standard deviation. Light traces are
-per-fold curves. Dashed vertical line marks the selected lambda_ctc=0.1.
-A horizontal AR-only reference is drawn as a dotted line.
+5-fold mean +/- standard error of the mean. Dashed vertical line marks the
+selected lambda_ctc=0.1. A horizontal AR-only reference is drawn as a
+dotted line.
 
-Lambda sweep data lives under
-  results/hwr2/train_element_word_hybrid_{01..10}_onhw_wi/
-  ar_transformer__onhw_wi_word_rh/{0..4}/train_*.json
-AR-only baseline is under
-  results/hwr2/Baseline-AR-blconv_b/ar_transformer__onhw_wi_word_rh/
+Data source: trained results under results/hwr2/ when present
+(train_element_word_hybrid_{01..10}_onhw_wi + the AR-only
+Baseline-AR-blconv_b run); otherwise the pre-aggregated figure4 block in
+HWRFormer.json, so the paper figure can be regenerated without re-running
+training.
 
 Run from anywhere:
     python plot_lambda_sweep.py
@@ -19,6 +19,8 @@ from __future__ import annotations
 
 import glob
 import json
+import math
+import os
 import statistics
 from pathlib import Path
 
@@ -28,11 +30,9 @@ matplotlib.use("Agg")
 matplotlib.rcParams["pdf.fonttype"] = 42  # TrueType, no Type3 (Springer)
 import matplotlib.pyplot as plt
 
-RESULTS = Path("${REPO}/results/hwr2")
-OUT_PDF = Path(
-    "${REPO}/publications/paper2_lncs_overleaf/"
-    "figures/ctc_diagnostics_compact.pdf"
-)
+REPO = Path(os.environ.get("REPO", Path(__file__).resolve().parents[2]))
+RESULTS = REPO / "results" / "hwr2"
+OUT_PDF = REPO / "figures" / "lambda_sweep.pdf"
 
 LAMBDAS = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 SELECTED = 0.1
@@ -62,34 +62,54 @@ def lambda_dir(k: int) -> Path:
     )
 
 
-def main() -> None:
-    # Collect per-fold CER and WER for each lambda.
-    cer_per_lambda: list[list[float]] = []
-    wer_per_lambda: list[list[float]] = []
+def load_data() -> tuple[list[float], list[float], list[float], list[float], float, float]:
+    """Return (cer_means, cer_sems, wer_means, wer_sems, ar_cer, ar_wer).
+
+    5-fold means and standard error of the mean (SEM = std / sqrt(n)).
+    SEM is the right error bar for "is the mean different across lambdas?"
+    The between-fold std spans ~7pp (some writers are harder than others)
+    and would dwarf the <1pp between-lambda signal; SEM gives the
+    uncertainty in the mean estimate itself.
+    """
+    if RESULTS.exists():
+        cer_per_lambda: list[list[float]] = []
+        wer_per_lambda: list[list[float]] = []
+        for lam in LAMBDAS:
+            c, w = read_per_fold(lambda_dir(int(round(lam * 10))))
+            cer_per_lambda.append(c)
+            wer_per_lambda.append(w)
+        ar_only_dir = RESULTS / "Baseline-AR-blconv_b" / "ar_transformer__onhw_wi_word_rh"
+        ar_cers, ar_wers = read_per_fold(ar_only_dir)
+        if ar_cers and all(len(c) > 1 for c in cer_per_lambda):
+            return (
+                [statistics.mean(c) for c in cer_per_lambda],
+                [statistics.stdev(c) / math.sqrt(len(c)) for c in cer_per_lambda],
+                [statistics.mean(w) for w in wer_per_lambda],
+                [statistics.stdev(w) / math.sqrt(len(w)) for w in wer_per_lambda],
+                statistics.mean(ar_cers),
+                statistics.mean(ar_wers),
+            )
+        print(f"results under {RESULTS} incomplete; falling back to HWRFormer.json")
+    json_path = REPO / "HWRFormer.json"
+    d = json.load(open(json_path))
+    print(f"using pre-aggregated numbers from {json_path}")
+    sweep = d["figure4_lambda_sweep"]
+    cer_means, cer_sems, wer_means, wer_sems = [], [], [], []
     for lam in LAMBDAS:
-        idx = int(round(lam * 10))
-        c, w = read_per_fold(lambda_dir(idx))
-        cer_per_lambda.append(c)
-        wer_per_lambda.append(w)
+        e = sweep[f"lambda_{lam:.1f}"]
+        n = int(e.get("n_folds", 5))
+        cer_means.append(float(e["cer_mean"]))
+        cer_sems.append(float(e["cer_std"]) / math.sqrt(n))
+        wer_means.append(float(e["wer_mean"]))
+        wer_sems.append(float(e["wer_std"]) / math.sqrt(n))
+    ar_only = d["table2_interventions"]["onhw_wi_word_rh"]["HWRFormer"]
+    return cer_means, cer_sems, wer_means, wer_sems, float(ar_only["cer_mean"]), float(ar_only["wer_mean"])
 
-    # AR-only baseline (lambda = 0 anchor).
-    ar_only_dir = RESULTS / "Baseline-AR-blconv_b" / "ar_transformer__onhw_wi_word_rh"
-    ar_cers, ar_wers = read_per_fold(ar_only_dir)
-    ar_cer_mean = statistics.mean(ar_cers)
-    ar_wer_mean = statistics.mean(ar_wers)
 
-    import math
+def main() -> None:
+    cer_means, cer_sems, wer_means, wer_sems, ar_cer_mean, ar_wer_mean = load_data()
+
     fig, (ax_cer, ax_wer) = plt.subplots(1, 2, figsize=(9.0, 3.2), sharex=True)
-
-    # 5-fold means and standard error of the mean (SEM = std / sqrt(n)).
-    # SEM is the right error bar for "is the mean different across lambdas?"
-    # The between-fold std spans ~7pp (some writers are harder than others)
-    # and would dwarf the <1pp between-lambda signal; SEM gives the
-    # uncertainty in the mean estimate itself.
-    cer_means = [statistics.mean(c) for c in cer_per_lambda]
-    cer_sems = [statistics.stdev(c) / math.sqrt(len(c)) if len(c) > 1 else 0.0 for c in cer_per_lambda]
-    wer_means = [statistics.mean(w) for w in wer_per_lambda]
-    wer_sems = [statistics.stdev(w) / math.sqrt(len(w)) if len(w) > 1 else 0.0 for w in wer_per_lambda]
 
     ax_cer.errorbar(LAMBDAS, cer_means, yerr=cer_sems, color="#1f77b4", linewidth=2,
                     marker="o", markersize=6, capsize=4, zorder=5)

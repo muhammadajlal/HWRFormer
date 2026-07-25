@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
-"""Generate corruption_p_sweep.pdf for the paper.
+"""Generate the noise-injection rate-sweep figure (paper Fig. 3).
 
-Per-dataset panel: CER and WER vs noise-injection rate p_ic, 5-fold mean.
+Per-dataset panel: CER and WER vs noise-injection rate p_ni, 5-fold mean.
 CER on left axis (blue), WER on right axis (orange). Dotted vertical line
-marks the recommended default p_ic=0.15. The no-noise-injection baseline is
+marks the recommended default p_ni=0.15. The no-noise-injection baseline is
 the left-most x=0.00 point.
 
 Four panels (2x2): OnHW-WI (small-vocabulary, writer-independent), OnHW-WD
 (small-vocabulary, writer-dependent), private words (large-vocabulary,
-short), and private sentences (large-vocabulary, long). Export ``REPO``
-first (``export REPO=$(pwd)``) so the result paths resolve.
+short), and private sentences (large-vocabulary, long).
+
+Data source: trained results under results/hwr2/ when present; any dataset
+without complete sweep results falls back to the pre-aggregated figure3
+block in HWRFormer.json, so the paper figure can be regenerated without
+re-running training.
 
 Run from anywhere:
     python plot_noise_injection_p_sweep.py
@@ -30,7 +34,7 @@ import matplotlib.pyplot as plt
 
 REPO = Path(os.environ.get("REPO", Path(__file__).resolve().parents[2]))
 RESULTS = REPO / "results" / "hwr2"
-OUT_PDF = REPO / "publications" / "paper2_lncs_overleaf" / "figures" / "corruption_p_sweep.pdf"
+OUT_PDF = REPO / "figures" / "noise_injection_p_sweep.pdf"
 
 PANELS = [
     ("onhw_wi_word_rh", "OnHW-Words500 (WI)"),
@@ -93,17 +97,33 @@ _LAYOUT = {1: (1, 1), 2: (1, 2), 3: (1, 3), 4: (2, 2)}
 _FIGSIZE = {(1, 1): (5.0, 3.2), (1, 2): (9.5, 3.2), (1, 3): (11.5, 3.2), (2, 2): (9.5, 6.0)}
 
 
+def gather_json(block: dict, dataset_key: str) -> tuple[list[float], list[float], list[float]]:
+    """Sweep points from the pre-aggregated figure3 block in HWRFormer.json."""
+    entry = block[dataset_key]
+    ps = sorted(float(p) for p in entry)
+    cers = [float(entry[f"{p:.2f}"]["cer_mean"]) for p in ps]
+    wers = [float(entry[f"{p:.2f}"]["wer_mean"]) for p in ps]
+    return ps, cers, wers
+
+
 def main() -> None:
+    json_block = None
     panels = []
     for dataset_key, label in PANELS:
-        ps, cers, wers = gather(dataset_key)
+        ps, cers, wers = gather(dataset_key) if RESULTS.exists() else ([], [], [])
+        if len(ps) < 2:
+            if json_block is None:
+                json_path = REPO / "HWRFormer.json"
+                json_block = json.load(open(json_path))["figure3_noise_rate_sweep"]
+                print(f"using pre-aggregated numbers from {json_path}")
+            ps, cers, wers = gather_json(json_block, dataset_key)
         if len(ps) >= 2:
             panels.append((label, ps, cers, wers))
         else:
-            print(f"skip {label}: only {len(ps)} sweep point(s) found under {RESULTS}")
+            print(f"skip {label}: no sweep data in results/ or HWRFormer.json")
 
     if not panels:
-        print(f"no datasets with >=2 sweep points found under {RESULTS}; nothing to plot")
+        print("no datasets with >=2 sweep points found; nothing to plot")
         return
 
     n = len(panels)

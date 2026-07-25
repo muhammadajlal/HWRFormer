@@ -173,7 +173,7 @@ def main() -> None:
         d = RESULTS / f"train_element_word_hybrid_{k:02d}_onhw_wi" / "ar_transformer__onhw_wi_word_rh"
         out["figure_lambda_sweep"][f"lambda_{lam:.1f}"] = cell(d)
 
-    # ----- Figure: p_ic sweep on OnHW-WI words, OnHW-WD words, Priv-sent -----
+    # ----- Figure: p_ni sweep on OnHW-WI words, OnHW-WD words, Priv-sent -----
     out["figure_pic_sweep"] = {}
     for dataset_key in ["onhw_wi_word_rh", "onhw_wd_word_rh", "wi_sent_hw6_meta"]:
         out["figure_pic_sweep"][dataset_key] = {}
