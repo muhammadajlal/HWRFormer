@@ -122,13 +122,37 @@ from the Fraunhofer IIS OnHW release:
 <https://www.iis.fraunhofer.de/de/ff/lv/dataanalytics/anwproj/schreibtrainer/onhw-dataset.html>
 
 We use a MSCOCO-like structure (`train.json` / `val.json` + per-sample CSVs).
-After downloading, convert the original dataset to this structure with the
-`onhw.ipynb` notebook, adjusting the `dir_raw`, `dir_out`, and `writer_indep`
-variables accordingly. Then place the converted dataset under:
+The `onhw.ipynb` notebook converts the official OnHW release into this
+structure and must be run **twice** — once per split:
+
+1. Extract the OnHW download. You need the two right-handed words500
+   variants: `Words500_indep_R` (writer-independent) and `Words500_dep_R`
+   (writer-dependent). Each contains the five official fold directories with
+   the released pickle files (`all_x_dat_{train,val}_imu.pkl`,
+   `all_{train,val}_gt.pkl`, `{train,val}_ids.pkl`).
+2. Open `onhw.ipynb` (e.g. `jupyter lab` inside the `hwrformer` env) and set
+   the three variables at the top of the first code cell:
+
+   | Run | `dir_raw` | `dir_out` | `writer_indep` |
+   |---|---|---|---|
+   | WI | `<extracted>/Words500_indep_R` | `${REPO}/data/onhw_wi_word_rh` | `True` |
+   | WD | `<extracted>/Words500_dep_R` | `${REPO}/data/onhw_wd_word_rh` | `False` |
+
+3. Run all cells. Per official fold, the notebook reads the OnHW pickles,
+   drops empty sequences and sequences longer than 1,024 timesteps, writes one
+   13-channel CSV per sample, and builds `train.json` / `val.json` with the
+   5-fold annotations and the character categories.
+
+The result (all preprocessing included — the training code applies
+normalization and augmentation at load time, and the official OnHW fold
+boundaries are preserved unchanged):
 
 ```
 ${REPO}/data/onhw_wi_word_rh/   # writer-independent words
-${REPO}/data/onhw_wd_word_rh/   # writer-dependent words
+├── train.json                  # per-fold annotations (label, filename, writer id)
+├── val.json
+└── data/<fold>/{train,val}/*.csv
+${REPO}/data/onhw_wd_word_rh/   # writer-dependent words (same layout)
 ```
 
 ## Training
