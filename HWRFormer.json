@@ -38,27 +38,27 @@
   "CNN_Transformer_CTC": {
    "onhw_wi_word_rh": {
     "cer_mean": 7.16,
-    "cer_std": 6.17,
+    "cer_std": 6.90,
     "wer_mean": 15.33,
-    "wer_std": 9.33
+    "wer_std": 10.43
    },
    "onhw_wd_word_rh": {
     "cer_mean": 12.96,
-    "cer_std": 3.08,
+    "cer_std": 3.44,
     "wer_mean": 41.88,
-    "wer_std": 6.84
+    "wer_std": 7.65
    },
    "wi_word_hw6_meta": {
     "cer_mean": 9.53,
-    "cer_std": 0.56,
+    "cer_std": 0.63,
     "wer_mean": 33.81,
-    "wer_std": 0.73
+    "wer_std": 0.82
    },
    "wi_sent_hw6_meta": {
     "cer_mean": 7.41,
-    "cer_std": 0.73,
+    "cer_std": 0.82,
     "wer_mean": 29.13,
-    "wer_std": 2.63
+    "wer_std": 2.94
    },
    "params_M": 4.62,
    "macs_M": 429,
