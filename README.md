@@ -26,7 +26,9 @@ output. During hybrid training, an auxiliary CTC head on the same encoder
 ## Results
 
 5-fold cross-validation on the **public** OnHW-words500 splits (writer-independent
-and writer-dependent). CER/WER in %, lower is better; **bold** = best per column.
+and writer-dependent) and on the **private** Stabilo word/sentence splits from the
+paper (aggregate numbers only — the private data itself is not released, see
+Dataset). CER/WER in %, lower is better; **bold** = best per column.
 MACs are reported at greedy AR decoding `len_max = 6`.
 
 **Architecture migration — CTC baseline → HWRFormer.**
@@ -39,12 +41,28 @@ MACs are reported at greedy AR decoding `len_max = 6`.
 | HWRFormer | AR | elementwise | **6.94** | 10.50 | 16.31 | 31.87 | 4.64M | 669M |
 | HWRFormer | AR | headwise | 6.99 | 10.47 | 15.70 | **31.08** | 4.57M | 667M |
 
+Same migration on the **private** splits (CER / WER; params/MACs as above,
+sentence profiling uses 4,096 input timesteps):
+
+| Model | Obj. | Gating | Words CER | Words WER | Sent. CER | Sent. WER |
+|---|---|---|---|---|---|---|
+| REWI (CNN-BiLSTM) | CTC | — | **9.39** | 31.82 | **6.55** | 23.52 |
+| CNN-Transformer-CTC | CTC | — | 9.53 | 33.81 | 7.41 | 29.13 |
+| HWRFormer | AR | — | 10.59 | 21.39 | 10.37 | 16.73 |
+| HWRFormer | AR | elementwise | 9.96 | **19.04** | 9.28 | **14.88** |
+| HWRFormer | AR | headwise | 9.63 | 19.07 | 9.12 | 14.96 |
+
+AR decoding halves WER on the private splits too, while REWI keeps the best
+CER there — the CER/WER trade-off discussed in the paper.
+
 **Exposure-bias interventions** (CER / WER), HWRFormer = elementwise-gated AR.
 
 | Dataset | REWI | HWRFormer | + Noise inj. | + Hybrid | + Hybrid + Noise inj. |
 |---|---|---|---|---|---|
 | OnHW-words500 (WI) | 7.30 / 15.16 | 6.94 / 10.50 | 6.86 / 13.04 | 6.83 / **10.17** | **6.70** / 12.93 |
 | OnHW-words500 (WD) | 14.81 / 44.77 | 16.31 / 31.87 | 13.52 / 35.98 | 13.39 / **27.42** | **11.49** / 31.72 |
+| Private words (WI) | 9.39 / 31.82 | 9.96 / **19.04** | **7.79** / 23.39 | 9.37 / 19.65 | 7.85 / 24.88 |
+| Private sentences (WI) | **6.55** / 23.52 | 9.28 / **14.88** | 7.09 / 18.83 | 9.38 / 16.98 | 9.73 / 27.52 |
 
 OnHW WI fold difficulty varies strongly across writers (individual folds range
 from ~1 to ~15 % CER), so sub-percentage-point differences on WI are within
@@ -67,11 +85,20 @@ reduction per split in **bold**.
 |   | ✓ | 2.77 | 6.83 | 3.1% | 9.86 | 13.38 | 34.8% |
 | ✓ | ✓ | 5.33 | 6.70 | **67.3%** | 10.33 | 11.48 | **78.7%** |
 
-Noise injection removes most of the exposure-bias gap on both public splits
-(61–67 % WI, 67–79 % WD), while hybrid CTC–AR alone barely changes it
-(3 % WI, 35 % WD), consistent with its role as an encoder-side regularizer.
-The paper additionally reports the private word and sentence splits. Reproduce
-with `eval_tf_gap.py` (see the Evaluation section).
+Same probe on the **private** splits:
+
+| Noise | Hybrid | Words w/ TF | Words w/o TF | Words Gap red. | Sent. w/ TF | Sent. w/o TF | Sent. Gap red. |
+|:-:|:-:|--:|--:|--:|--:|--:|--:|
+|   |   | 5.23 | 9.96 | 0.0% | 2.73 | 9.28 | 0.0% |
+| ✓ |   | 6.52 | 7.80 | 72.9% | 4.62 | 7.09 | **62.3%** |
+|   | ✓ | 5.13 | 9.37 | 10.4% | 3.30 | 9.38 | 7.2% |
+| ✓ | ✓ | 6.64 | 7.85 | **74.4%** | 7.20 | 9.73 | 61.4% |
+
+Noise injection removes most of the exposure-bias gap on every split
+(61.1 % WI, 67.4 % WD, 72.9 % private words, 62.3 % private sentences), while
+hybrid CTC–AR alone changes it far less (3.1–34.8 %), consistent with its role
+as an encoder-side regularizer. Reproduce with `eval_tf_gap.py` (see the
+Evaluation section); the private splits require the non-released Stabilo data.
 
 ## Installation
 
