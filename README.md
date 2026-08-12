@@ -44,7 +44,7 @@ MACs are reported at greedy AR decoding `len_max = 6`.
 Same migration on the **private** splits (CER / WER; params/MACs as above,
 sentence profiling uses 4,096 input timesteps):
 
-| Model | Obj. | Gating | Words CER | Words WER | Sent. CER | Sent. WER |
+| Model | Obj. | Gating | Priv. (words) CER | Priv. (words) WER | Priv. (sent.) CER | Priv. (sent.) WER |
 |---|---|---|---|---|---|---|
 | REWI (CNN-BiLSTM) | CTC | — | **9.39** | 31.82 | **6.55** | 23.52 |
 | CNN-Transformer-CTC | CTC | — | 9.53 | 33.81 | 7.41 | 29.13 |
