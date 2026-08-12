@@ -26,7 +26,7 @@ output. During hybrid training, an auxiliary CTC head on the same encoder
 ## Results
 
 5-fold cross-validation on the **public** OnHW-words500 splits (writer-independent
-and writer-dependent) and on the **private** Stabilo word/sentence splits from the
+and writer-dependent) and on the **private** STABILO word/sentence splits from the
 paper (aggregate numbers only — the private data itself is not released, see
 Dataset). CER/WER in %, lower is better; **bold** = best per column.
 MACs are reported at greedy AR decoding `len_max = 6`.
@@ -101,7 +101,7 @@ Noise injection removes most of the exposure-bias gap on every split
 (61.1 % WI, 67.4 % WD, 72.9 % private words, 62.3 % private sentences), while
 hybrid CTC–AR alone changes it far less (3.1–34.8 %), consistent with its role
 as an encoder-side regularizer. Reproduce with `eval_tf_gap.py` (see the
-Evaluation section); the private splits require the non-released Stabilo data.
+Evaluation section); the private splits require the non-released STABILO data.
 
 ## Installation
 
