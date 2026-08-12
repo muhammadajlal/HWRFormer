@@ -37,7 +37,7 @@ MACs are reported at greedy AR decoding `len_max = 6`.
 |---|---|---|---|---|---|---|---|---|
 | REWI (CNN-BiLSTM) | CTC | — | 7.30 | 15.16 | 14.81 | 44.77 | 4.64M | **413M** |
 | CNN-Transformer-CTC | CTC | — | 7.16 | 15.33 | **12.96** | 41.88 | 4.62M | 429M |
-| HWRFormer | AR | — | 7.10 | **10.39** | 16.47 | 32.07 | 4.57M | 653M |
+| HWRFormer | AR | ungated | 7.10 | **10.39** | 16.47 | 32.07 | 4.57M | 653M |
 | HWRFormer | AR | elementwise | **6.94** | 10.50 | 16.31 | 31.87 | 4.64M | 669M |
 | HWRFormer | AR | headwise | 6.99 | 10.47 | 15.70 | **31.08** | 4.57M | 667M |
 
@@ -48,7 +48,7 @@ sentence profiling uses 4,096 input timesteps):
 |---|---|---|---|---|---|---|
 | REWI (CNN-BiLSTM) | CTC | — | **9.39** | 31.82 | **6.55** | 23.52 |
 | CNN-Transformer-CTC | CTC | — | 9.53 | 33.81 | 7.41 | 29.13 |
-| HWRFormer | AR | — | 10.59 | 21.39 | 10.37 | 16.73 |
+| HWRFormer | AR | ungated | 10.59 | 21.39 | 10.37 | 16.73 |
 | HWRFormer | AR | elementwise | 9.96 | **19.04** | 9.28 | **14.88** |
 | HWRFormer | AR | headwise | 9.63 | 19.07 | 9.12 | 14.96 |
 
