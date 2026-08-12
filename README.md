@@ -205,7 +205,7 @@ writer-dependent split.
 | Hybrid λ sweep | `others/train_hybrid.yaml` | `dual_head.lambda_ctc:` `0.1 … 1.0` | `train_element_word_hybrid_<NN>_onhw_wi/ar_transformer__onhw_wi_word_rh` |
 | Hybrid weight-tying | `others/train_hybrid.yaml` | `dual_head.tie.ctc_to_ar_outproj: true` | `train_element_word_hybrid_<NN>_onhw_wi_ctc_to_ar_outproj/ar_transformer__onhw_wi_word_rh` |
 | Hybrid + noise injection | `others/train_hybrid.yaml` + `noise_injection` block | both blocks (λ=0.1) | `HybridNoiseInjection_<mode>/ar_transformer__onhw_wi_word_rh` |
-| Exposure-bias probe (Table 3) | any saved fold checkpoint | *(no training; run `eval_tf_gap.py`, see Evaluation)* | writes `eval_tf_gap.json` next to the fold's `train.yaml` |
+| Exposure-bias probe (Table 4) | any saved fold checkpoint | *(no training; run `eval_tf_gap.py`, see Evaluation)* | writes `eval_tf_gap.json` next to the fold's `train.yaml` |
 
 `self_confusion` additionally needs per-fold confusion matrices at
 `noise_injection.confusion_path`; the other noise-injection modes are
@@ -223,7 +223,7 @@ python evaluate.py -c configs/train.yaml
 To re-score a single trained checkpoint, edit `configs/test.yaml` (`checkpoint`,
 `idx_fold`) and run `python main.py -c configs/test.yaml`.
 
-**Direct exposure-bias probe (Table 3).** For a saved fold checkpoint, run
+**Direct exposure-bias probe (Table 4).** For a saved fold checkpoint, run
 
 ```bash
 python eval_tf_gap.py -c <dir_work>/<fold>/<fold>/train.yaml \
@@ -233,7 +233,7 @@ python eval_tf_gap.py -c <dir_work>/<fold>/<fold>/train.yaml \
 to compute teacher-forced (w/ TF) vs.\ greedy decoding without teacher forcing
 (w/o TF) on the same checkpoint. The script writes `eval_tf_gap.json` next to
 the YAML, with per-condition CER/WER and the w/ TF → w/o TF gap. Sweeping
-across all folds and training conditions reproduces Table 3 of the paper.
+across all folds and training conditions reproduces Table 4 of the paper.
 
 The paper's figures can be regenerated without re-running training — the
 scripts use trained results under `results/hwr2/` when present and otherwise
@@ -252,7 +252,7 @@ python analysis/scripts/plot_lambda_sweep.py                  # Fig. 4: lambda_c
 main.py                 # train / evaluate one fold
 train_cv.py             # run all cross-validation folds sequentially
 evaluate.py             # 5-fold aggregation + params/MACs
-eval_tf_gap.py          # direct exposure-bias probe (w/ TF vs. w/o TF, Table 3)
+eval_tf_gap.py          # direct exposure-bias probe (w/ TF vs. w/o TF, Table 4)
 onhw.ipynb              # OnHW -> MSCOCO-like dataset conversion
 hwrformer/              # core library
   model/                #   1D CNN encoder, AR Transformer decoder, CNN-Transformer-CTC,

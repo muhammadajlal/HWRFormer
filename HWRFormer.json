@@ -3,7 +3,8 @@
   "schema": "5-fold mean (std) in percent; sections map 1:1 to the camera-ready paper's tables and figures",
   "paper": "Mitigating Exposure Bias in IMU Handwriting Recognition with Noise Injection and Hybrid CTC-AR Training (AALTD 2026 @ ECML PKDD)",
   "generated": "2026-07-23 (camera-ready sync; every table value verified against results.json aggregates)",
-  "reproduce": "dir_work groups below use the release config conventions; see README 'Reproducing paper experiments'"
+  "reproduce": "dir_work groups below use the release config conventions; see README 'Reproducing paper experiments'",
+  "note_table_numbering": "JSON keys use content names (migration/interventions/tf_gap_probe). Camera-ready paper numbering: migration=Table 1, model complexity (params/MACs)=Table 2, interventions=Table 3, tf-gap probe=Table 4."
  },
  "table1_migration": {
   "REWI_CNN_BiLSTM_CTC": {
@@ -38,7 +39,7 @@
   "CNN_Transformer_CTC": {
    "onhw_wi_word_rh": {
     "cer_mean": 7.16,
-    "cer_std": 6.90,
+    "cer_std": 6.9,
     "wer_mean": 15.33,
     "wer_std": 10.43
    },
